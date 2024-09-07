@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#divLoading {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    justify-content: center;
+    align-items: center;
+    background: rgba(254, 254, 255, .65);
+    z-index: 9999;
+    display: none
+}
+
+.backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+}
+
+/* estilos de datatble persinalizados */
+/* DataTables base */
+.dataTables_wrapper {
+    width: 100%;
+    margin: 0 auto;
+}
+
+table.dataTable {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    /* Tailwind's border-gray-300 */
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f9fafb;
+    /* Tailwind's bg-gray-50 */
+    color: #374151;
+    /* Tailwind's text-gray-900 */
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #ec4899;
+    /* Tailwind's border-pink-500 */
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.4);
+    /* Tailwind's focus:ring-pink-300 */
+}
+
+.dataTables_wrapper .dataTables_length select {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    outline: none;
+    background-color: #f9fafb;
+    color: #374151;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: #ec4899;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.4);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.125rem;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #ec4899;
+    border-color: #ec4899;
+    color: #ffffff;
+}
+
+/* Table Head */
+table.dataTable thead {
+    background-color: #ffffff;
+    /* Tailwind's bg-white */
+    color: #374151;
+    /* Tailwind's text-gray-700 */
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    /* Tailwind's text-xs */
+}
+
+table.dataTable thead th {
+    padding: 0.75rem 1.5rem;
+    /* Tailwind's py-3 px-6 */
+    border-bottom: 2px solid #e5e7eb;
+    /* Tailwind's border-b */
+    text-align: left;
+}
+
+/* Table Body */
+table.dataTable tbody {
+    background-color: #ffffff;
+}
+
+table.dataTable tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    /* Tailwind's border-b */
+}
+
+table.dataTable tbody td {
+    padding: 0.75rem 1.5rem;
+    /* Tailwind's py-4 px-6 */
+    text-align: left;
+    vertical-align: middle;
+}
+
+table.dataTable tbody td img {
+    width: 2rem;
+    /* Tailwind's w-8 */
+    height: 2rem;
+    /* Tailwind's h-8 */
+    border-radius: 9999px;
+    /* Tailwind's rounded-full */
+    margin-right: 0.5rem;
+    /* Tailwind's mr-2 */
+}
+
+table.dataTable tbody tr:hover {
+    background-color: #f9fafb;
+    /* Tailwind's bg-gray-50 */
+}
+
+/* Table Button */
+table.dataTable tbody td .btn {
+    color: #ffffff;
+    background-color: #ec4899;
+    /* Tailwind's bg-pink-500 */
+    border: none;
+    border-radius: 0.375rem;
+    /* Tailwind's rounded-lg */
+    padding: 0.625rem 1.25rem;
+    /* Tailwind's py-2.5 px-5 */
+    font-size: 0.875rem;
+    /* Tailwind's text-sm */
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    text-align: center;
+    display: inline-block;
+}
+
+table.dataTable tbody td .btn:hover {
+    background-color: #db2777;
+    /* Tailwind's hover:bg-pink-600 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Hover shadow */
+    transform: translateY(-0.125rem) scale(1.05);
+}
+
+table.dataTable tbody td .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.4);
+    /* Tailwind's focus:ring-pink-300 */
+}

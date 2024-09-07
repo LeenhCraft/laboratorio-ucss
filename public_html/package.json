@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  },
+  "dependencies": {
+    "autosize": "^6.0.1",
+    "boxicons": "^2.1.4",
+    "flatpickr": "^4.6.13"
+  }
+}

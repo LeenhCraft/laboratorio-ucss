@@ -15,13 +15,13 @@ use App\Controllers\Login\verifyController;
 use App\Controllers\LogoutController;
 use App\Controllers\User\AccountController;
 use App\Controllers\WebController;
-
+use App\Middleware\AdminMiddleware;
 // Middlewares
 use App\Middleware\LoginMiddleware;
 use App\Middleware\RegisterMiddleware;
 
 // $app->get('/', WebController::class . ':index');
-$app->get('/', LoginAdminController::class . ':index');
+$app->get('/', LoginAdminController::class . ':index')->add(new AdminMiddleware());
 $app->get('/login', LoginController::class . ':index')->add(new LoginMiddleware());
 $app->post('/login', LoginController::class . ':login');
 // $app->get('/register', RegisterController::class . ':index')->add(new LoginMiddleware());

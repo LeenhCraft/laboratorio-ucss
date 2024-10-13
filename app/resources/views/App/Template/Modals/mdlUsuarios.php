@@ -2,7 +2,6 @@
 <div class="modal fade" id="modalFormUsuario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <form id="user_form" name="user_form" class="form-horizontal" onsubmit="return save(this,event)">
-
             <div class="modal-content">
                 <div class="modal-header headerRegister">
                     <h5 class="modal-title" id="titleModal">Nuevo Usuario</h5>
@@ -47,17 +46,15 @@
                     <div class="dropdown-divider mt-4"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline-secondary ft-b text-capitalize" type="button" data-bs-dismiss="modal">
-                        <i class="fa fa-lg fa-times-circle">
-                        </i>
+                    <button class="btn btn-outline-secondary fw-bold text-capitalize" type="button" data-bs-dismiss="modal">
                         <span class="text-capitalize">cerrar</span>
                     </button>
-                    <button class="btn btn-primary" id="btnActionForm" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Guardar</span></button>
-
+                    <button class="btn btn-primary fw-bold" id="btnActionForm" type="submit">
+                        <span id="btnText">Guardar</span>
+                    </button>
                 </div>
             </div>
         </form>
-
     </div>
 </div>
 

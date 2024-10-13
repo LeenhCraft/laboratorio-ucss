@@ -36,13 +36,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline-secondary ft-b text-capitalize" type="button" data-bs-dismiss="modal">
-                        <i class="fa fa-lg fa-times-circle">
-                        </i>
+                    <button class="btn btn-outline-secondary fw-bold text-capitalize" type="button" data-bs-dismiss="modal">
                         <span class="text-capitalize">cerrar</span>
                     </button>
-                    <button id="btnActionForm" class="btn btn-primary ft-b" type="submit">
-                        <i class="fa fa-fw fa-lg fa-check-circle"></i>
+                    <button id="btnActionForm" class="btn btn-primary fw-bold" type="submit">
                         <span id="btnText">Guardar</span>
                     </button>
                 </div>

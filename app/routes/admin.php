@@ -5,27 +5,17 @@ use Slim\Routing\RouteCollectorProxy;
 
 // Controllers
 use App\Controllers\Admin\CentinelaController;
-use App\Controllers\Admin\ConsultasController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\DataBaseController;
-use App\Controllers\Admin\DesparasitacionesController;
-use App\Controllers\Admin\EstadoconsultaController;
-use App\Controllers\Admin\HistoriaclinicaController;
+use App\Controllers\Admin\IngresosController;
 use App\Controllers\Admin\LoginAdminController;
-use App\Controllers\Admin\MascotasController;
+use App\Controllers\Admin\MaterialesController;
 use App\Controllers\Admin\MenusController;
 use App\Controllers\Admin\PermisosController;
 use App\Controllers\Admin\PersonasController;
-use App\Controllers\Admin\PropietariosController;
-use App\Controllers\Admin\RazasController;
-use App\Controllers\Admin\ReportesController;
-use App\Controllers\Admin\ReservarcitasController;
 use App\Controllers\Admin\RolesController;
-use App\Controllers\Admin\ServiciosController;
 use App\Controllers\Admin\SubmenusController;
 use App\Controllers\Admin\UsuariosController;
-use App\Controllers\Admin\VacunacionesController;
-use App\Controllers\Admin\VentasController;
 use App\Controllers\Crud\CrudController;
 use App\Controllers\LogoutController;
 use App\Middleware\AdminMiddleware;
@@ -34,7 +24,6 @@ use App\Middleware\AdminMiddleware;
 use App\Middleware\LoginAdminMiddleware;
 use App\Middleware\PermissionMiddleware;
 use App\Middleware\RemoveCsrfMiddleware;
-use Dotenv\Repository\RepositoryBuilder;
 
 $app->get('/admin/login', LoginAdminController::class . ':index')->add(new AdminMiddleware)->add(new RemoveCsrfMiddleware());
 $app->post('/admin/login', LoginAdminController::class . ':sessionUser');
@@ -134,5 +123,23 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->post("/update", CrudController::class . ":update");
         $group->post("/delete", CrudController::class . ":delete");
         $group->post("/libros", CrudController::class . ":libros");
+    })->add(PermissionMiddleware::class);
+
+    $group->group('/inventario', function (RouteCollectorProxy $group) {
+        $group->get('', MaterialesController::class . ':index')->add(new RemoveCsrfMiddleware());
+        $group->post('', MaterialesController::class . ':list');
+        $group->post('/save', MaterialesController::class . ':store');
+        $group->post('/update', MaterialesController::class . ':update');
+        $group->post('/search', MaterialesController::class . ':search');
+        $group->post('/delete', MaterialesController::class . ':delete');
+    })->add(PermissionMiddleware::class);
+
+    $group->group('/ingresos', function (RouteCollectorProxy $group) {
+        $group->get('', IngresosController::class . ':index')->add(new RemoveCsrfMiddleware());
+        $group->post('', IngresosController::class . ':list');
+        $group->post('/save', IngresosController::class . ':store');
+        $group->post('/update', IngresosController::class . ':update');
+        $group->post('/search', IngresosController::class . ':search');
+        $group->post('/delete', IngresosController::class . ':delete');
     })->add(PermissionMiddleware::class);
 })->add(new LoginAdminMiddleware());

@@ -34,7 +34,15 @@ class PersonasController extends Controller
             'titulo_web' => 'Personal',
             "url" => $request->getUri()->getPath(),
             "permisos" => $this->permisos,
-            "js" => ["js/app/nw_personal.js"],
+            "css" => [
+                "vendor/select2/select2/dist/css/select2.min.css",
+                "css/select2-custom.css",
+                // 'css/custom.css'
+            ],
+            "js" => [
+                "vendor/select2/select2/dist/js/select2.full.min.js",
+                "js/app/nw_personal.js"
+            ],
             "tk" => [
                 "name" => $this->guard->getTokenNameKey(),
                 "value" => $this->guard->getTokenValueKey(),
@@ -126,7 +134,7 @@ class PersonasController extends Controller
             "per_celular" => $data['phone'],
             "per_email" => strtolower($data['email']),
             "per_direcc" => ucwords($data['address']),
-            "per_estado" => $data['status'] ?: 0,
+            "per_estado" => $data['status'] ?? 0,
         ];
 
 
@@ -144,24 +152,24 @@ class PersonasController extends Controller
 
     private function validar($data)
     {
-        if (empty($data["dni"])) {
-            return false;
-        }
+        // if (empty($data["dni"])) {
+        //     return false;
+        // }
         if (empty($data["name"])) {
             return false;
         }
-        if (empty($data["email"])) {
-            return false;
-        }
-        if (empty($data["phone"])) {
-            return false;
-        }
-        if (empty($data["address"])) {
-            return false;
-        }
-        if ($data["status"] != 0 && $data["status"] != 1) {
-            return false;
-        }
+        // if (empty($data["email"])) {
+        //     return false;
+        // }
+        // if (empty($data["phone"])) {
+        //     return false;
+        // }
+        // if (empty($data["address"])) {
+        //     return false;
+        // }
+        // if ($data["status"] != 0 && $data["status"] != 1) {
+        //     return false;
+        // }
         return true;
     }
 
@@ -234,7 +242,7 @@ class PersonasController extends Controller
             "per_celular" => $data['phone'],
             "per_email" => strtolower($data['email']),
             "per_direcc" => ucwords($data['address']),
-            "per_estado" => $data['status'] ?: 0,
+            "per_estado" => $data['status'] ?? 0,
         ];
 
         if (!empty($data["per_foto"]["name"])) {
@@ -274,24 +282,24 @@ class PersonasController extends Controller
         if (empty($data["id"])) {
             return false;
         }
-        if (empty($data["dni"])) {
-            return false;
-        }
+        // if (empty($data["dni"])) {
+        //     return false;
+        // }
         if (empty($data["name"])) {
             return false;
         }
-        if (empty($data["email"])) {
-            return false;
-        }
-        if (empty($data["phone"])) {
-            return false;
-        }
-        if (empty($data["address"])) {
-            return false;
-        }
-        if ($data["status"] != 0 && $data["status"] != 1) {
-            return false;
-        }
+        // if (empty($data["email"])) {
+        //     return false;
+        // }
+        // if (empty($data["phone"])) {
+        //     return false;
+        // }
+        // if (empty($data["address"])) {
+        //     return false;
+        // }
+        // if ($data["status"] != 0 && $data["status"] != 1) {
+        //     return false;
+        // }
         return true;
     }
 

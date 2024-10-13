@@ -40,8 +40,8 @@
     <link rel="stylesheet" href="/css/app/demo.css">
     <!-- <link rel="stylesheet" href="/css/plugins/bootstrap-select.min.css"> -->
 
-    <link rel="stylesheet" href="/css/app/plugins/select2.min.css">
-    <link rel="stylesheet" href="/css/app/plugins/select2-bootstrap4.min.css">
+    <!-- <link rel="stylesheet" href="/css/app/plugins/select2.min.css">
+    <link rel="stylesheet" href="/css/app/plugins/select2-bootstrap4.min.css"> -->
     <link rel="stylesheet" href="/css/datatables.bootstrap5.css">
 
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.css"> -->

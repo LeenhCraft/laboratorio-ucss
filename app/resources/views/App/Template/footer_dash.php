@@ -37,7 +37,7 @@
 <script src="/js/app/plugins/jquery.dataTables.min.js"></script>
 <script src="/js/app/plugins/dataTables.bootstrap.min.js"></script>
 <script src="/js/app/plugins/sweetalert2.all.min.js"></script>
-<script src="/js/app/plugins/select2.min.js"></script>
+<!-- <script src="/js/app/plugins/select2.min.js"></script> -->
 <script>
     var divLoading = $("#divLoading");
     const Toast = Swal.mixin({

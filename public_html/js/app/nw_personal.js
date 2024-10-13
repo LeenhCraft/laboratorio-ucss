@@ -1,5 +1,10 @@
 let tb;
 $(document).ready(function () {
+  $("#status").select2({
+    width: "100%",
+    placeholder: "Seleccione una opción",
+    dropdownParent: $("#status").parent(),
+  });
   tb = $("#tb").dataTable({
     aProcessing: true,
     aServerSide: true,
@@ -178,10 +183,7 @@ function viewImg(ths, event) {
 function resetForm(ths) {
   $("#person_form").trigger("reset");
   $("#id").val("");
-  $(".mostrarimagen").attr(
-    "src",
-    "/img/placeholder-150x150.png"
-  );
+  $(".mostrarimagen").attr("src", "/img/placeholder-150x150.png");
   $("#person_form").attr("onsubmit", "return save(this,event)");
   $("#btnText").html("Guardar");
   $("#btnActionForm").removeClass("btn-info").addClass("btn-primary");

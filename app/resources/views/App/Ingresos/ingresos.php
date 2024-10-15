@@ -15,18 +15,15 @@
         ?>
     </div>
     <div class="table-responsive text-nowrap mb-4 min-h-52">
-        <table id="tbl" class="table table-hover min-h-52" width="100%">
+        <table id="tbl" class="table table-striped min-h-52" width="100%">
             <thead>
                 <tr>
                     <th></th>
-                    <th>Periodo</th>
+                    <th></th>
                     <th>Código</th>
                     <th>Fec. Ing.</th>
-                    <th>Tip. Pago</th>
+                    <th>Articulos</th>
                     <th>Datos Ingreso</th>
-                    <th>Importe</th>
-                    <th>Pagos</th>
-                    <th>Deudas</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +33,7 @@
 </div>
 <?php
 if ($data['permisos']['perm_w'] == 1 || $data['permisos']['perm_u'] == 1) {
-    // getModal('mdlMateriales', $data);
+    getModal('mdlIngresos', $data);
 }
 footerApp('Template/footer_dash', $data);
 ?>

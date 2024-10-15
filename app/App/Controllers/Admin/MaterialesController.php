@@ -28,15 +28,7 @@ class MaterialesController extends Controller
             'titulo_web' => 'Control de Inventario',
             "url" => $request->getUri()->getPath(),
             "permisos" => $this->permisos,
-            "css" => [
-                "vendor/select2/select2/dist/css/select2.min.css",
-                'node_modules/flatpickr/dist/flatpickr.min.css',
-                // "css/select2-custom.css",
-            ],
             "js" => [
-                "vendor/select2/select2/dist/js/select2.min.js",
-                'node_modules/flatpickr/dist/flatpickr.min.js',
-				'node_modules/flatpickr/dist/l10n/es.js',
                 "js/app/nw_inventario.js"
             ],
             "tk" => [
@@ -54,77 +46,148 @@ class MaterialesController extends Controller
         }
         $data = $this->sanitize($request->getParsedBody());
         $datos = [];
+        $arrData = [];
         switch ($data["tipo_material"]) {
             case 1:
                 $productos = new TableModel;
                 $productos->setTable("lab_productos");
                 $productos->setId("idproducto");
+                $arrData = array_merge($arrData, $productos->get());
 
                 $insumos = new TableModel;
                 $insumos->setTable("lab_insumos");
                 $insumos->setId("idinsumo");
+                $arrData = array_merge($arrData, $insumos->get());
 
                 $materiales = new TableModel;
                 $materiales->setTable("lab_materiales");
                 $materiales->setId("idmaterial");
+                $arrData = array_merge($arrData, $materiales->get());
 
-                // $model = new TableModel;
-                // $model
-                //     ->unionAll([$productos->getQuery()])
-                //     ->unionAll([$insumos->getQuery()])
-                //     ->unionAll([$materiales->getQuery()]);
-                $datos = $productos->get();
+                foreach ($arrData as $key => $row) {
+                    $articulosInventario = new TableModel;
+                    $articulosInventario->setTable("lab_balance_inventarios");
+                    $articulosInventario->setId("idbalance");
+                    $arrData[$key]['tipo'] = "3";
+                    $l = "idproducto";
+                    if (isset($row['idinsumo'])) {
+                        $arrData[$key]['tipo'] = "2";
+                        $l = "idinsumo";
+                    }
+                    if (isset($row['idmaterial'])) {
+                        $arrData[$key]['tipo'] = "1";
+                        $l = "idmaterial";
+                    }
+
+                    $arrData[$key]['delete'] = 0;
+                    $arrData[$key]['edit'] = 0;
+                    if ($this->permisos['perm_d'] == 1) {
+                        $arrData[$key]['delete'] = 1;
+                    }
+                    if ($this->permisos['perm_u'] == 1) {
+                        $arrData[$key]['edit'] = 1;
+                    }
+                    $arrData[$key]['id'] = $row['idproducto'] ?? $row['idinsumo'] ?? $row['idmaterial'];
+
+                    $total = $articulosInventario
+                        ->where($l, $row[$l])
+                        ->first();
+                    $arrData[$key]["stock"] = $total["stock_total"] ?? 0;
+                }
+
+                $datos = $arrData;
                 break;
             case 2:
                 $insumos = new TableModel;
                 $insumos->setTable("lab_insumos");
                 $insumos->setId("idinsumo");
 
-                if ($data["condicion_material"] == 2) {
-                    $insumos->where("stock", ">", 0)->get();
-                }
-                if ($data["condicion_material"] == 3) {
-                    $insumos->where("stock", "=", 0)->get();
-                }
-                if ($data["condicion_material"] == 4) {
-                    $insumos->where("stock", "<", 0)->get();
-                }
+                // if ($data["condicion_material"] == 2) {
+                //     $insumos->where("stock", ">", 0)->get();
+                // }
+                // if ($data["condicion_material"] == 3) {
+                //     $insumos->where("stock", "=", 0)->get();
+                // }
+                // if ($data["condicion_material"] == 4) {
+                //     $insumos->where("stock", "<", 0)->get();
+                // }
 
-                $datos = $insumos->get();
+                $arrData = $insumos->get();
+
+                foreach ($arrData as $key => $row) {
+                    $articulosInventario = new TableModel;
+                    $articulosInventario->setTable("lab_balance_inventarios");
+                    $articulosInventario->setId("idbalance");
+                    $arrData[$key]['tipo'] = "2";
+                    $arrData[$key]['delete'] = 0;
+                    $arrData[$key]['edit'] = 0;
+                    if ($this->permisos['perm_d'] == 1) {
+                        $arrData[$key]['delete'] = 1;
+                    }
+                    if ($this->permisos['perm_u'] == 1) {
+                        $arrData[$key]['edit'] = 1;
+                    }
+                    $arrData[$key]['id'] = $row['idinsumo'];
+                    $total = $articulosInventario
+                        ->where("idinsumo", $row["idinsumo"])
+                        ->first();
+                    $arrData[$key]["stock"] = $total["stock_total"] ?? 0;
+                }
+                $datos = $arrData;
                 break;
             case 3:
                 $materiales = new TableModel;
                 $materiales->setTable("lab_materiales");
                 $materiales->setId("idmaterial");
 
-                $datos = $materiales->get();
-                break;
-            case 4:
-                # code...
+                $arrData = $materiales->get();
+
+                foreach ($arrData as $key => $row) {
+                    $articulosInventario = new TableModel;
+                    $articulosInventario->setTable("lab_balance_inventarios");
+                    $articulosInventario->setId("idbalance");
+                    $arrData[$key]['tipo'] = "1";
+                    $arrData[$key]['delete'] = 0;
+                    $arrData[$key]['edit'] = 0;
+                    if ($this->permisos['perm_d'] == 1) {
+                        $arrData[$key]['delete'] = 1;
+                    }
+                    if ($this->permisos['perm_u'] == 1) {
+                        $arrData[$key]['edit'] = 1;
+                    }
+                    $arrData[$key]['id'] = $row['idmaterial'];
+                    $total = $articulosInventario
+                        ->where("idmaterial", $row["idmaterial"])
+                        ->first();
+                    $arrData[$key]["stock"] = $total["stock_total"] ?? 0;
+                }
+                $datos = $arrData;
                 break;
             default:
                 # code...
                 break;
         }
         for ($i = 0; $i < count($datos); $i++) {
-			$datos[$i]['delete'] = 0;
-			$datos[$i]['edit'] = 0;
+            $datos[$i]['delete'] = 0;
+            $datos[$i]['edit'] = 0;
 
-			if ($this->permisos['perm_d'] == 1) {
-				$datos[$i]['delete'] = 1;
-			}
-			if ($this->permisos['perm_u'] == 1) {
-				$datos[$i]['edit'] = 1;
-			}
-		}
+            if ($this->permisos['perm_d'] == 1) {
+                $datos[$i]['delete'] = 1;
+            }
+            if ($this->permisos['perm_u'] == 1) {
+                $datos[$i]['edit'] = 1;
+            }
+        }
         return $this->respondWithJson($response, $datos);
     }
 
     public function store($request, $response, $args)
     {
+        if ($this->permisos['perm_w'] !== "1") {
+            return $this->respondWithError($response, "No tiene permisos para realizar esta acción");
+        }
         $data = $this->sanitize($request->getParsedBody());
         if (isset($data["idmaterial"]) && !empty($data["idmaterial"])) {
-            dep("actualizar", 1);
             return $this->update($request, $response);
         }
 
@@ -134,6 +197,7 @@ class MaterialesController extends Controller
             return $this->respondWithError($response, $msg);
         }
 
+        $data["nombre"] = trim($data["nombre"]);
         $model = new TableModel;
         switch ($data['idtipomaterial']) {
             case 1:
@@ -178,8 +242,7 @@ class MaterialesController extends Controller
             return $this->respondWithSuccess($response, "Datos guardados correctamente");
         }
 
-        $msg = "Error al guardar los datos";
-        return $this->respondWithJson($response, $existe);
+        return $this->respondWithError($response, "Error al guardar los datos");
     }
 
     private function validar($data)
@@ -196,16 +259,40 @@ class MaterialesController extends Controller
     public function search($request, $response)
     {
         $data = $this->sanitize($request->getParsedBody());
-
         $errors = $this->validarSearch($data);
         if (!$errors) {
             $msg = "Verifique los datos ingresados";
             return $this->respondWithError($response, $msg);
         }
 
-        $model = new MenuAdminModel;
+        $model = new TableModel;
+        switch ($data['tipo']) {
+            case '1':
+                // materiales
+                $model->setTable("lab_materiales");
+                $model->setId("idmaterial");
+
+                break;
+            case '2':
+                // insumos
+                $model->setTable("lab_insumos");
+                $model->setId("idinsumo");
+                break;
+            case '3':
+                // productos
+                $model->setTable("lab_productos");
+                $model->setId("idproducto");
+                break;
+            default:
+                $msg = "Seleccione un tipo de material";
+                return $this->respondWithError($response, $msg);
+                break;
+        }
+
         $rq = $model->find($data['id']);
         if (!empty($rq)) {
+            $rq["id"] = $data['id'];
+            $rq["idtipomaterial"] = $data['tipo'];
             return $this->respondWithJson($response, ["status" => true, "data" => $rq]);
         }
         $msg = "No se encontraron datos";
@@ -217,19 +304,19 @@ class MaterialesController extends Controller
         if (empty($data["id"])) {
             return false;
         }
+        if (empty($data["tipo"])) {
+            return false;
+        }
         return true;
     }
 
     public function update($request, $response)
     {
+        if ($this->permisos['perm_u'] !== "1") {
+            return $this->respondWithError($response, "No tiene permisos para realizar esta acción");
+        }
         $data = $this->sanitize($request->getParsedBody());
         // return $this->respondWithJson($response, $data);
-
-        $validate = $this->guard->validateToken($data['csrf_name'], $data['csrf_value']);
-        if (!$validate) {
-            $msg = "Error de validación, por favor recargue la página";
-            return $this->respondWithError($response, $msg);
-        }
 
         $errors = $this->validarUpdate($data);
         if (!$errors) {
@@ -237,23 +324,52 @@ class MaterialesController extends Controller
             return $this->respondWithError($response, $msg);
         }
 
-        $model = new MenuAdminModel;
-        $existe = $model->where("men_nombre", "LIKE", $data['name'])->where("idmenu", "!=", $data['id'])->first();
+        $model = new TableModel;
+        switch ($data['idtipomaterial']) {
+            case 1:
+                $model->setTable("lab_materiales");
+                $model->setId("idmaterial");
+                break;
+            case 2:
+                $model->setTable("lab_insumos");
+                $model->setId("idinsumo");
+                break;
+            case 3:
+                $model->setTable("lab_productos");
+                $model->setId("idproducto");
+                break;
+            default:
+                return $this->respondWithError($response, "Seleccione un tipo de material");
+                break;
+        }
+
+        $existe = [];
+        // verificare si se esta cambiando el tipo de material
+        if ($data['tipo_material_original'] != $data['idtipomaterial']) {
+            return $this->respondWithError($response, "No se puede cambiar el tipo de material, para cambiarlo elimine el registro y vuelva a crearlo.");
+        }
+        $existe = $model
+            ->where("nombre", "LIKE", $data['nombre'])
+            ->where($model->getId(), "!=", $data['idmaterial'])
+            ->first();
         if (!empty($existe)) {
             $msg = "Ya tiene un submenu con el mismo nombre";
             return $this->respondWithError($response, $msg);
         }
 
-        $rq = $model->update($data['id'], [
-            "men_nombre" => ucfirst($data['name']) ?? "UNDEFINED",
-            "men_url" => $data['url'] ?? "#",
-            "men_controlador" => $data['controller'] ?? null,
-            // "men_icono" => !empty($data['icon']) ? $data['icon'] : "bx-circle",
-            "men_icono" => $data['icon'] ?: "bx-circle",
-            "men_url_si" => isset($data['url_si']) && $data['url_si'] == "on" ? '1' : "0",
-            "men_orden" => $data['order'] ?: '1',
-            "men_visible" => $data['visible'] ?: "0"
-        ]);
+        $defaultValues = [
+            "nombre" => "UNDEFINED",
+            "modelo" => null,
+            "codigo_ucss" => null,
+            "stock" => 0,
+            "observaciones" => null
+        ];
+        $dataInsert = [];
+        foreach ($defaultValues as $key => $defaultValue) {
+            $dataInsert[$key] = isset($data[$key]) && $data[$key] != "" ? $data[$key] : $defaultValue;
+        }
+
+        $rq = $model->update($data['idmaterial'], $dataInsert);
         if (!empty($rq)) {
             $msg = "Datos actualizados";
             return $this->respondWithSuccess($response, $msg);
@@ -264,25 +380,23 @@ class MaterialesController extends Controller
 
     private function validarUpdate($data)
     {
-        if (empty($data["id"])) {
+        if (empty($data["idmaterial"])) {
             return false;
         }
-        if (empty($data["name"])) {
+        if (empty($data["nombre"])) {
             return false;
         }
-        if (isset($data['url_si']) && $data['url_si'] == "on") {
-            if (empty($data["url"])) {
-                return false;
-            }
-            if (empty($data["controller"])) {
-                return false;
-            }
+        if (empty($data["idtipomaterial"])) {
+            return false;
         }
         return true;
     }
 
     public function delete($request, $response)
     {
+        if ($this->permisos['perm_d'] !== "1") {
+            return $this->respondWithError($response, "No tiene permisos para realizar esta acción");
+        }
         $data = $this->sanitize($request->getParsedBody());
         if (empty($data["id"])) {
             return $this->respondWithError($response, "Error de validación, por favor recargue la página");

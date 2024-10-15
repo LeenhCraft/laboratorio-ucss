@@ -54,7 +54,9 @@
                 <tr>
                     <th>n°</th>
                     <th>Código UCSS</th>
+                    <th>Tipo</th>
                     <th>Material</th>
+                    <th>stock</th>
                     <th></th>
                 </tr>
             </thead>

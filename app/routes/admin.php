@@ -138,8 +138,17 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->get('', IngresosController::class . ':index')->add(new RemoveCsrfMiddleware());
         $group->post('', IngresosController::class . ':list');
         $group->post('/save', IngresosController::class . ':store');
+        $group->post('/save/art', IngresosController::class . ':storeArticulos');
         $group->post('/update', IngresosController::class . ':update');
         $group->post('/search', IngresosController::class . ':search');
+        $group->post('/view', IngresosController::class . ':verArticulosIngresos');
         $group->post('/delete', IngresosController::class . ':delete');
+        $group->post('/delete/art', IngresosController::class . ':deleteArticuloIngreso');
+
+        $group->get('/p', IngresosController::class . ':listProductos');
+        $group->get('/e', IngresosController::class . ':listEstadosProductos');
+        $group->get('/u', IngresosController::class . ':listUnidadesMedida');
+        
+        $group->get('/lnh', IngresosController::class . ':cambiarCodigo');
     })->add(PermissionMiddleware::class);
 })->add(new LoginAdminMiddleware());

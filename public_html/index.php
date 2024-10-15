@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set('America/Lima');
+setlocale(LC_COLLATE, 'es_ES.UTF-8');
 
 use Slim\Factory\AppFactory;
 

@@ -1,24 +1,19 @@
 let tb;
 $(document).ready(function () {
-  // Inicializar tipo_material
-  initializeSelect2("#tipo_material");
-
-  // Inicializar condicion_material
-  initializeSelect2("#condicion_material");
-
-  initializeSelect2("#idtipomaterial");
-
   tabla();
-
-  
 });
 
 $("#btnNuevo").on("click", function () {
+  resetForm();
   $("#mdlMateriales").modal("show");
 });
 
 $("#btnInventario").on("click", function () {
   $("#mdlInventario").modal("show");
+});
+
+$("#limpiar").on("click", function () {
+  resetForm();
 });
 
 $("#frmMateriales").submit(function (e) {
@@ -32,6 +27,10 @@ $("#frmMateriales").submit(function (e) {
       if (response.status) {
         Swal.fire("Éxito", response.message, "success");
         tb.api().ajax.reload();
+        resetForm();
+        $("#mdlMateriales").modal("hide");
+      } else {
+        Swal.fire("Error", response.message, "error");
       }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
@@ -97,9 +96,31 @@ function tabla(data = null) {
         },
       },
       {
+        data: "tipo",
+        width: "5%",
+        render: function (data, type, row, meta) {
+          let badgeTypes = {
+            1: '<span class="fw-normal text-primary">Material</span>',
+            2: '<span class="fw-normal text-success">Insumo</span>',
+            3: '<span class="fw-normal text-warning">Productos</span>',
+          };
+
+          let badge =
+            badgeTypes[data] || '<span class="badge bg-danger">Sin tipo</span>';
+          return badge;
+        },
+      },
+      {
         data: "nombre",
+        className: "fw-semibold",
         render: function (data, type, row, meta) {
           return data;
+        },
+      },
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          return data.stock;
         },
       },
       {
@@ -123,7 +144,7 @@ function generateDropdownMenu(row) {
       generateDropdownOption(
         "Editar",
         "bx bx-edit-alt",
-        `fntEdit(${row.idmascota})`
+        `fntEdit('${row.id}','${row.tipo}')`
       )
     );
   }
@@ -132,7 +153,7 @@ function generateDropdownMenu(row) {
       generateDropdownOption(
         "Eliminar",
         "bx bx-trash",
-        `fntDel(${row.idmascota})`
+        `fntDel('${row.id}','${row.tipo}')`
       )
     );
   }
@@ -164,4 +185,46 @@ function generateDropdownOption(text, iconClass, onClickFunction) {
         <a class="dropdown-item disabled" href="#"><i class="${iconClass} me-2"></i>${text}</a>
       `;
   }
+}
+
+function fntEdit(id, tipo) {
+  let ajaxUrl = base_url + "admin/inventario/search";
+  resetForm();
+  divLoading.css("display", "flex");
+  $.post(ajaxUrl, { id, tipo }, function (response) {})
+    .done(function (response) {
+      if (response.status) {
+        Toast.fire({
+          icon: "success",
+          title: "Datos cargados correctamente.",
+        });
+        let data = response.data;
+        $("#idmaterial").val(data.id);
+        $("#idtipomaterial").val(data.idtipomaterial);
+        $("#tipo_material_original").val(data.idtipomaterial);
+        $("#nombre").val(data.nombre);
+        $("#modelo").val(data.modelo);
+        $("#codigo_ucss").val(data.codigo_ucss);
+        $("#observaciones").val(data.observaciones);
+        $("#mdlMateriales").modal("show");
+      }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      Toast.fire({
+        icon: "error",
+        title: "error: " + errorThrown,
+      });
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown);
+    })
+    .always(function (response) {
+      divLoading.css("display", "none");
+    });
+}
+
+function resetForm() {
+  $("#frmMateriales").trigger("reset");
+  $("#idmaterial").val("");
+  $("#tipo_material_original").val("");
 }

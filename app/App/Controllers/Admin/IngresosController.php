@@ -480,12 +480,14 @@ class IngresosController extends Controller
         $model->setTable("lab_detalle_inventarios");
         $model->setId("idinventariodetalle");
 
-        $rq = $model->find($data["id"]);
-        if (!empty($rq)) {
+        $articulo = $model->find($data["id"]);
+        if (!empty($articulo)) {
             $rq = $model->delete($data["id"]);
             if (!empty($rq)) {
-                $msg = "Datos eliminados correctamente";
-                return $this->respondWithSuccess($response, $msg);
+                // descuenta el stock en lab_balance_inventarios
+                $clsBalance = new BalanceController;
+                $clsBalance->quitarStock($articulo);
+                return $this->respondWithSuccess($response, "Datos eliminados correctamente");
             }
         }
         $msg = "Error al eliminar los datos";
@@ -494,6 +496,7 @@ class IngresosController extends Controller
 
     public function cambiarCodigo($request, $response)
     {
+        return $this->respondWithJson($response, [$this->obtenerCorrelativo()]);
         $model = new TableModel;
         $model->setTable("lab_inventarios");
         $model->setId("idinventario");
@@ -515,7 +518,9 @@ class IngresosController extends Controller
         $model = new TableModel;
         $model->setTable("lab_inventarios");
         $model->setId("idinventario");
-        $all = $model->orderBy("fecha_ingreso", "DESC")->get();
+        $all = $model->orderBy("fecha_ingreso", "DESC")
+            ->orderBy("idinventario", "DESC")->get();
+        // return $all;
         return intval(explode("-", $all[0]["codigo"])[1]) + 1;
     }
 }

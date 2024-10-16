@@ -30,7 +30,7 @@ class BalanceController extends Controller
             }
         }
         $whereClause = implode(' AND ', $where);
-        $existe = $model->query("SELECT * FROM lab_balance_inventarios WHERE $whereClause", $params)->get();
+        $existe = $model->query("SELECT * FROM lab_balance_inventarios WHERE $whereClause", $params)->first();
         // si no existe, se crea un nuevo registro
         if (empty($existe)) {
             // Preparar los datos para insertar un nuevo registro
@@ -43,6 +43,7 @@ class BalanceController extends Controller
                 "stock_cajas" => 0,
                 "stock_unidades_sueltas" => 0,
                 "factor_caja" => 0,
+                "stock_total" => 0,
             ];
 
             // Verificar si se trata de unidades sueltas (2) o cajas (3)
@@ -55,6 +56,9 @@ class BalanceController extends Controller
 
                 // Actualizar el factor de caja si es necesario
                 $dataInsert["factor_caja"] = $isCaja ? $data["factor"] : 0;
+
+                // Calcular el stock total
+                $dataInsert["stock_total"] = $isCaja ? $data["cantidad"] * $data["factor"] : $data["cantidad"];
             }
 
             // Crear el nuevo registro en la base de datos
@@ -76,6 +80,9 @@ class BalanceController extends Controller
                 // Actualizar factor de caja: Si es caja, usar el nuevo factor; si no, mantener el factor existente
                 "factor_caja" => $isCaja ? $data["factor"] : $existe["factor_caja"],
 
+                // Calcular el stock total
+                "stock_total" => $existe["stock_total"] + ($isCaja ? $data["cantidad"] * $data["factor"] : $data["cantidad"]),
+
                 // Actualizar la fecha de última actualización
                 "fecha_ultima_actualizacion" => date("Y-m-d H:i:s"),
             ];
@@ -84,5 +91,46 @@ class BalanceController extends Controller
             $response = $model->update($existe["idbalance"], $dataUpdate);
         }
         return $response;
+    }
+
+    function quitarStock($data)
+    {
+        $model = new TableModel;
+        $model->setTable("lab_balance_inventarios");
+        $model->setId("idbalance");
+        // verificar si el articulo ya existe
+        $where = [];
+        $params = [];
+        $fields = ['idproducto', 'idinsumo', 'idmaterial'];
+        foreach ($fields as $field) {
+            if (empty($data[$field])) {
+                $where[] = "$field IS NULL";
+            } else {
+                $where[] = "$field = ?";
+                $params[] = $data[$field];
+            }
+        }
+        $whereClause = implode(' AND ', $where);
+        $existe = $model->query("SELECT * FROM lab_balance_inventarios WHERE $whereClause", $params)->first();
+        $isCaja = $data["idmedida"] == 3;
+        $dataUpdate = [
+            // Actualizar stock de cajas: Si es caja, restar la cantidad; si no, mantener el valor actual
+            "stock_cajas" => $existe["stock_cajas"] - ($isCaja ? $data["cantidad"] : 0),
+
+            // Actualizar stock de unidades sueltas: Si no es caja, restar la cantidad; si es caja, mantener el valor actual
+            "stock_unidades_sueltas" => $existe["stock_unidades_sueltas"] - ($isCaja ? 0 : $data["cantidad"]),
+
+            // Actualizar factor de caja: Si es caja, usar el nuevo factor; si no, mantener el factor existente
+            "factor_caja" => $isCaja ? $data["factor"] : $existe["factor_caja"],
+
+            // Calcular el stock total
+            "stock_total" => $existe["stock_total"] - ($isCaja ? $data["cantidad"] * $data["factor"] : $data["cantidad"]),
+
+            // Actualizar la fecha de última actualización
+            "fecha_ultima_actualizacion" => date("Y-m-d H:i:s"),
+        ];
+
+        // Realizar la actualización en la base de datos
+        return $model->update($existe["idbalance"], $dataUpdate);
     }
 }

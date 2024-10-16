@@ -228,3 +228,12 @@ function resetForm() {
   $("#idmaterial").val("");
   $("#tipo_material_original").val("");
 }
+
+
+function fntDel(id){
+  Swal.fire({
+    text: "No se puede eliminar este registro.",
+    icon: 'info',
+    confirmButtonText: 'OK'
+  });
+}

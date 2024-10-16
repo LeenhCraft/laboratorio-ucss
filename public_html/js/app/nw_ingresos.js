@@ -400,7 +400,6 @@ function verArticulosIngreso(id, codigo) {
   $.post(base_url + "admin/ingresos/view", { id }, function () {})
     .done(function (response) {
       if (response.status) {
-        $("#mdlVer").modal("show");
         $("#tbl2").dataTable({
           data: response.data,
           language: {
@@ -409,8 +408,8 @@ function verArticulosIngreso(id, codigo) {
           columns: [
             {
               data: null,
-              className: "text-center px-1",
               width: "5%",
+              className: "text-center px-1",
               render: function (data, type, row, meta) {
                 return meta.row + 1;
               },
@@ -428,8 +427,11 @@ function verArticulosIngreso(id, codigo) {
             },
             {
               data: "cantidad",
-              width: "5%",
               className: "text-center px-0",
+              render: function (data, type, row, meta) {
+                // si es caja agregar la cantidad y el factor, pero si no es caja solo la cantidad
+                return row.medida == "Caja" ? `${data} cajas x ${row.factor}` : `${data} Und.`;
+              },
             },
             {
               data: "estado",
@@ -437,7 +439,6 @@ function verArticulosIngreso(id, codigo) {
             },
             {
               data: null,
-              width: "5%",
               className: "text-center",
               render: function (data, type, row, meta) {
                 return generateBtnBrush(data, id, codigo);
@@ -450,6 +451,7 @@ function verArticulosIngreso(id, codigo) {
           searching: false,
           lengthChange: false,
         });
+        $("#mdlVer").modal("show");
       }
       Toast.fire({
         icon: response.status ? "success" : "error",
@@ -474,7 +476,7 @@ function verArticulosIngreso(id, codigo) {
 }
 
 function generateBtnBrush(data, id, codigo) {
-  return `<button class="btn p-1 btn-sm border-0 text-danger" type="button" onclick="delArticuloIngreso(${data.idinventariodetalle},${id},${codigo})">
+  return `<button class="btn p-1 btn-sm border-0 text-danger" type="button" onclick="delArticuloIngreso(${data.idinventariodetalle},${id},'${codigo}')">
   <img src="/img/bin_empty.png" class="w-px-20 d-none">
   <i class='bx bx-trash-alt bx-sm' ></i>
   </button>`;
@@ -495,6 +497,7 @@ function delArticuloIngreso(id, l, n) {
           if (response.status) {
             verArticulosIngreso(l, n);
           }
+          tb.DataTable().ajax.reload();
           Swal.fire(
             response.status ? "Éxito" : "Error",
             response.message,

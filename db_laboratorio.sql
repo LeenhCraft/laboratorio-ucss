@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 07-09-2024 a las 12:28:42
+-- Tiempo de generación: 16-10-2024 a las 05:38:59
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -37,6 +37,333 @@ CREATE TABLE `crud_modulo` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `lab_balance_inventarios`
+--
+
+CREATE TABLE `lab_balance_inventarios` (
+  `idbalance` int NOT NULL,
+  `idproducto` int DEFAULT NULL,
+  `idinsumo` int DEFAULT NULL,
+  `idmaterial` int DEFAULT NULL,
+  `stock_cajas` int NOT NULL DEFAULT '0',
+  `stock_unidades_sueltas` int NOT NULL DEFAULT '0',
+  `stock_total` int DEFAULT NULL,
+  `factor_caja` int NOT NULL,
+  `fecha_ultima_actualizacion` datetime DEFAULT CURRENT_TIMESTAMP,
+  `fecha_registro` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_balance_inventarios`
+--
+
+INSERT INTO `lab_balance_inventarios` (`idbalance`, `idproducto`, `idinsumo`, `idmaterial`, `stock_cajas`, `stock_unidades_sueltas`, `stock_total`, `factor_caja`, `fecha_ultima_actualizacion`, `fecha_registro`) VALUES
+(1, NULL, 1, NULL, 0, 1, 1, 0, '2024-10-15 15:38:43', '2024-10-15 15:38:43'),
+(2, NULL, NULL, 1, 0, 1, 1, 0, '2024-10-15 15:39:19', '2024-10-15 15:39:19'),
+(3, NULL, 2, NULL, 0, 1, 1, 0, '2024-10-15 15:39:57', '2024-10-15 15:39:57'),
+(4, NULL, 3, NULL, 0, 6, 6, 0, '2024-10-15 15:40:26', '2024-10-15 15:40:26'),
+(5, NULL, 4, NULL, 0, 1, 1, 0, '2024-10-15 15:41:12', '2024-10-15 15:41:12'),
+(6, NULL, 5, NULL, 0, 50, 50, 0, '2024-10-15 15:41:35', '2024-10-15 15:41:35'),
+(7, NULL, 6, NULL, 0, 100, 100, 0, '2024-10-15 15:42:06', '2024-10-15 15:42:06'),
+(8, NULL, 7, NULL, 0, 100, 100, 0, '2024-10-15 15:42:52', '2024-10-15 15:42:52'),
+(9, NULL, 8, NULL, 0, 25, 25, 0, '2024-10-15 15:43:17', '2024-10-15 15:43:17'),
+(10, NULL, NULL, 2, 0, 50, 50, 0, '2024-10-15 15:43:35', '2024-10-15 15:43:35'),
+(11, NULL, NULL, 3, 0, 1, 1, 0, '2024-10-15 16:26:22', '2024-10-15 16:26:22'),
+(12, NULL, NULL, 5, 0, 1, 1, 0, '2024-10-15 17:42:06', '2024-10-15 17:42:06'),
+(13, NULL, NULL, 4, 0, 1, 1, 0, '2024-10-15 17:42:20', '2024-10-15 17:42:20'),
+(14, NULL, NULL, 6, 0, 1, 1, 0, '2024-10-15 17:42:28', '2024-10-15 17:42:28'),
+(15, NULL, NULL, 7, 0, 1, 1, 0, '2024-10-15 17:42:35', '2024-10-15 17:42:35');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_condiciones`
+--
+
+CREATE TABLE `lab_condiciones` (
+  `idcondicion` int NOT NULL,
+  `nombre` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_condiciones`
+--
+
+INSERT INTO `lab_condiciones` (`idcondicion`, `nombre`, `fecha_registro`) VALUES
+(1, 'No especificado', '2024-10-14 11:41:38'),
+(2, 'Bueno', '2024-10-14 11:41:38'),
+(3, 'Regular', '2024-10-14 11:41:49'),
+(4, 'Malo', '2024-10-14 11:41:49'),
+(5, 'Reparacion', '2024-10-14 11:41:55');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_detalle_inventarios`
+--
+
+CREATE TABLE `lab_detalle_inventarios` (
+  `idinventariodetalle` int NOT NULL,
+  `idinventario` int DEFAULT NULL,
+  `idproducto` int DEFAULT NULL,
+  `idinsumo` int DEFAULT NULL,
+  `idmaterial` int DEFAULT NULL,
+  `idcondicion` int NOT NULL,
+  `cantidad` int NOT NULL,
+  `idmedida` int NOT NULL,
+  `factor` decimal(7,2) DEFAULT '0.00',
+  `fecha_vencimiento` date DEFAULT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_detalle_inventarios`
+--
+
+INSERT INTO `lab_detalle_inventarios` (`idinventariodetalle`, `idinventario`, `idproducto`, `idinsumo`, `idmaterial`, `idcondicion`, `cantidad`, `idmedida`, `factor`, `fecha_vencimiento`, `observaciones`, `fecha_registro`) VALUES
+(12, 2, NULL, 1, NULL, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 15:38:43'),
+(13, 3, NULL, NULL, 1, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 15:39:19'),
+(14, 4, NULL, 2, NULL, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 15:39:57'),
+(15, 5, NULL, 3, NULL, 2, 6, 2, 1.00, NULL, NULL, '2024-10-15 15:40:26'),
+(16, 6, NULL, 4, NULL, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 15:41:12'),
+(17, 7, NULL, 5, NULL, 2, 50, 2, 1.00, NULL, NULL, '2024-10-15 15:41:35'),
+(18, 8, NULL, 6, NULL, 2, 100, 2, 1.00, NULL, NULL, '2024-10-15 15:42:06'),
+(19, 9, NULL, 7, NULL, 2, 100, 2, 1.00, NULL, NULL, '2024-10-15 15:42:52'),
+(20, 1, NULL, 8, NULL, 2, 25, 2, 1.00, NULL, NULL, '2024-10-15 15:43:17'),
+(21, 11, NULL, NULL, 2, 2, 50, 2, 1.00, NULL, NULL, '2024-10-15 15:43:35'),
+(22, 11, NULL, NULL, 3, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 16:26:22'),
+(23, 12, NULL, NULL, 5, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:06'),
+(24, 12, NULL, NULL, 4, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:20'),
+(25, 12, NULL, NULL, 6, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:28'),
+(26, 12, NULL, NULL, 7, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:35');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_docentes`
+--
+
+CREATE TABLE `lab_docentes` (
+  `iddocente` int NOT NULL,
+  `nombre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `codigo` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_ingresos_laboratorios`
+--
+
+CREATE TABLE `lab_ingresos_laboratorios` (
+  `idingreso` int NOT NULL,
+  `iddocente` int NOT NULL,
+  `titulo_practica` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `nro_practicas` int DEFAULT NULL,
+  `carrera` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `asignatura` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `turno` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `ciclo` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha` date NOT NULL,
+  `hora_inicio` time DEFAULT NULL,
+  `hora_fin` time DEFAULT NULL,
+  `nro_estudiantes` int DEFAULT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_insumos`
+--
+
+CREATE TABLE `lab_insumos` (
+  `idinsumo` int NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `modelo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `codigo_ucss` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `stock` decimal(7,2) NOT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_insumos`
+--
+
+INSERT INTO `lab_insumos` (`idinsumo`, `nombre`, `modelo`, `codigo_ucss`, `stock`, `observaciones`, `fecha_registro`) VALUES
+(1, 'Ácido acetil salícilico 100mg', NULL, NULL, 0.00, NULL, '2024-10-15 08:13:11'),
+(2, 'Agua estéril de 1000ml', NULL, NULL, 0.00, NULL, '2024-10-15 08:13:49'),
+(3, 'Alcohol en gel de 1000ml', NULL, NULL, 0.00, NULL, '2024-10-15 08:14:03'),
+(4, 'Algodón', NULL, NULL, 0.00, NULL, '2024-10-15 08:15:06'),
+(5, 'Aguja Hipodérmica Estéril 18G x 1 1/2\"', NULL, NULL, 0.00, NULL, '2024-10-15 08:15:15'),
+(6, 'Aguja Hipodérmica Estéril 21G x 1 1/2\"', NULL, NULL, 0.00, NULL, '2024-10-15 08:15:29'),
+(7, 'Aguja Hipodérmica Estéril 23G x 1 1/2\"', NULL, NULL, 0.00, NULL, '2024-10-15 08:15:38'),
+(8, 'Aguja Hipodérmica Estéril 25G x 5/8\"', NULL, NULL, 0.00, NULL, '2024-10-15 08:15:46');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_inventarios`
+--
+
+CREATE TABLE `lab_inventarios` (
+  `idinventario` int NOT NULL,
+  `codigo` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `fecha_ingreso` date NOT NULL,
+  `motivo_ingreso` int NOT NULL,
+  `tipo_documento` int NOT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_inventarios`
+--
+
+INSERT INTO `lab_inventarios` (`idinventario`, `codigo`, `fecha_ingreso`, `motivo_ingreso`, `tipo_documento`, `observaciones`, `fecha_registro`) VALUES
+(1, 'IN-0009', '2024-10-14', 3, 2, NULL, '2024-10-14 23:03:15'),
+(2, 'IN-0001', '2024-10-01', 3, 2, NULL, '2024-10-15 08:05:50'),
+(3, 'IN-0002', '2024-10-02', 3, 2, NULL, '2024-10-15 08:05:56'),
+(4, 'IN-0003', '2024-10-03', 3, 2, NULL, '2024-10-15 08:06:01'),
+(5, 'IN-0004', '2024-10-04', 3, 2, NULL, '2024-10-15 08:06:13'),
+(6, 'IN-0005', '2024-10-08', 3, 2, NULL, '2024-10-15 08:06:23'),
+(7, 'IN-0006', '2024-10-09', 3, 2, NULL, '2024-10-15 08:06:29'),
+(8, 'IN-0007', '2024-10-10', 3, 2, NULL, '2024-10-15 08:06:34'),
+(9, 'IN-0008', '2024-10-11', 3, 2, NULL, '2024-10-15 08:06:48'),
+(11, 'IN-0010', '2024-10-15', 1, 1, NULL, '2024-10-15 12:05:06'),
+(12, 'IN-0011', '2024-10-15', 1, 2, NULL, '2024-10-15 17:13:48');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_materiales`
+--
+
+CREATE TABLE `lab_materiales` (
+  `idmaterial` int NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `modelo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `codigo_ucss` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `stock` decimal(7,2) NOT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_materiales`
+--
+
+INSERT INTO `lab_materiales` (`idmaterial`, `nombre`, `modelo`, `codigo_ucss`, `stock`, `observaciones`, `fecha_registro`) VALUES
+(1, 'Aerocamara para inhalación', NULL, NULL, 0.00, NULL, '2024-10-15 08:13:30'),
+(2, 'Aspirador de secreciones', 'H003-3-FOLEE', '028579', 0.00, NULL, '2024-10-15 08:16:05'),
+(3, 'Aspirador de secresiones New Askir 230', NULL, '019207', 0.00, NULL, '2024-10-15 08:16:15'),
+(4, 'Balanza de Pie Health o meter', '100KG QTY', '028581', 0.00, NULL, '2024-10-15 08:16:33'),
+(5, 'Balanza Neonatal Health o meter', '100KG QTY', '028582', 0.00, NULL, '2024-10-15 08:16:51'),
+(6, 'Balanza pediátrica de 10-20 Kg', '549KL', '028532', 0.00, NULL, '2024-10-15 08:17:00'),
+(7, 'Balanza pediátrica de 20 Kg (Digital)', 'M108800', '019203', 0.00, NULL, '2024-10-15 08:17:11');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_movimientos`
+--
+
+CREATE TABLE `lab_movimientos` (
+  `idmovimiento` int NOT NULL,
+  `idinventariodetalle` int NOT NULL,
+  `tipo_movimiento` int DEFAULT NULL,
+  `tipo_detalle` int DEFAULT NULL,
+  `cantidad` decimal(7,2) NOT NULL,
+  `factor` int NOT NULL DEFAULT '1',
+  `fecha_movimiento` date NOT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_ocurrencias`
+--
+
+CREATE TABLE `lab_ocurrencias` (
+  `idocurrencia` int NOT NULL,
+  `idprestamo` int NOT NULL,
+  `idinventario` int NOT NULL,
+  `iddocente` int NOT NULL DEFAULT '0',
+  `idingreso` int NOT NULL DEFAULT '0',
+  `estudiante` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `cantidad` decimal(7,2) NOT NULL DEFAULT '1.00',
+  `fecha` date NOT NULL,
+  `descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_prestamos`
+--
+
+CREATE TABLE `lab_prestamos` (
+  `idprestamo` int NOT NULL,
+  `idingreso` int NOT NULL,
+  `iddocente` int NOT NULL DEFAULT '0',
+  `asignatura` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `carrera` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `turno` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `fecha` date NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_productos`
+--
+
+CREATE TABLE `lab_productos` (
+  `idproducto` int NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `modelo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `codigo_ucss` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `stock` decimal(7,2) NOT NULL,
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_unidades_medidas`
+--
+
+CREATE TABLE `lab_unidades_medidas` (
+  `idmedida` int NOT NULL,
+  `nombre` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_unidades_medidas`
+--
+
+INSERT INTO `lab_unidades_medidas` (`idmedida`, `nombre`, `fecha_registro`) VALUES
+(1, 'Sin especificar', '2024-10-14 11:43:37'),
+(2, 'Unida', '2024-10-14 11:43:43'),
+(3, 'Caja', '2024-10-14 11:43:47');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `sis_centinela`
 --
 
@@ -50,168 +377,6 @@ CREATE TABLE `sis_centinela` (
   `vis_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
   `vis_fechahora` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
---
--- Volcado de datos para la tabla `sis_centinela`
---
-
-INSERT INTO `sis_centinela` (`idvisita`, `vis_cod`, `idwebusuario`, `vis_ip`, `vis_agente`, `vis_method`, `vis_url`, `vis_fechahora`) VALUES
-(1, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:07:13'),
-(2, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:08:42'),
-(3, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:09:22'),
-(4, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:09:24'),
-(5, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:09:24'),
-(6, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:09:29'),
-(7, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:09:29'),
-(8, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:10:00'),
-(9, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:10:00'),
-(10, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/submenus', '2024-09-07 07:10:02'),
-(11, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/save', '2024-09-07 07:10:04'),
-(12, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:10:10'),
-(13, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:10:10'),
-(14, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:10:11'),
-(15, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:10:11'),
-(16, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/submenus', '2024-09-07 07:10:13'),
-(17, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/save', '2024-09-07 07:10:16'),
-(18, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:10:16'),
-(19, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:10:16'),
-(20, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:10:16'),
-(21, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/submenus', '2024-09-07 07:10:20'),
-(22, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/save', '2024-09-07 07:10:27'),
-(23, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:10:27'),
-(24, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:10:27'),
-(25, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:10:28'),
-(26, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:30'),
-(27, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:31'),
-(28, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:31'),
-(29, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:32'),
-(30, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:32'),
-(31, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:33'),
-(32, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:33'),
-(33, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:10:34'),
-(34, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:10:34'),
-(35, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:10:51'),
-(36, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/logout', '2024-09-07 07:10:55'),
-(37, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:10:55'),
-(38, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:12:15'),
-(39, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:12:17'),
-(40, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:12:27'),
-(41, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:12:29'),
-(42, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:12:30'),
-(43, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:13:17'),
-(44, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:13:29'),
-(45, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:15:16'),
-(46, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:15:17'),
-(47, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:15:39'),
-(48, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/login', '2024-09-07 07:15:42'),
-(49, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:15:43'),
-(50, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:15:43'),
-(51, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:15:57'),
-(52, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/logout', '2024-09-07 07:16:00'),
-(53, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:16:00'),
-(54, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/login', '2024-09-07 07:16:05'),
-(55, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:16:06'),
-(56, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:16:06'),
-(57, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:17:01'),
-(58, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:17:02'),
-(59, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/logout', '2024-09-07 07:17:05'),
-(60, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:17:05'),
-(61, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/login', '2024-09-07 07:19:25'),
-(62, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/login', '2024-09-07 07:19:26'),
-(63, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:19:26'),
-(64, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:20:02'),
-(65, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:20:02'),
-(66, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:20:03'),
-(67, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:20:03'),
-(68, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:21:19'),
-(69, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:21:20'),
-(70, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/menus', '2024-09-07 07:21:23'),
-(71, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/menus', '2024-09-07 07:21:23'),
-(72, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/submenus', '2024-09-07 07:21:41'),
-(73, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus', '2024-09-07 07:21:41'),
-(74, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus/menus', '2024-09-07 07:21:42'),
-(75, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/menus', '2024-09-07 07:21:44'),
-(76, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/menus', '2024-09-07 07:21:44'),
-(77, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/menus/search', '2024-09-07 07:21:57'),
-(78, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/menus/update', '2024-09-07 07:22:02'),
-(79, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/menus', '2024-09-07 07:22:02'),
-(80, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/submenus', '2024-09-07 07:22:08'),
-(81, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus', '2024-09-07 07:22:08'),
-(82, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus/menus', '2024-09-07 07:22:09'),
-(83, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus/save', '2024-09-07 07:22:34'),
-(84, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/submenus', '2024-09-07 07:22:41'),
-(85, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus', '2024-09-07 07:22:41'),
-(86, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:22:41'),
-(87, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:22:42'),
-(88, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:22:44'),
-(89, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:22:44'),
-(90, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/submenus', '2024-09-07 07:22:46'),
-(91, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/save', '2024-09-07 07:22:48'),
-(92, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:22:48'),
-(93, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:22:48'),
-(94, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:22:49'),
-(95, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/submenus', '2024-09-07 07:22:50'),
-(96, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/save', '2024-09-07 07:22:53'),
-(97, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:22:53'),
-(98, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:22:53'),
-(99, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:22:54'),
-(100, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/submenus', '2024-09-07 07:22:55'),
-(101, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/save', '2024-09-07 07:22:57'),
-(102, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/roles', '2024-09-07 07:22:57'),
-(103, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/menus', '2024-09-07 07:22:57'),
-(104, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:22:58'),
-(105, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:22:59'),
-(106, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:22:59'),
-(107, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:23:00'),
-(108, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:23:00'),
-(109, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:23:00'),
-(110, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/roles', '2024-09-07 07:23:03'),
-(111, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/roles', '2024-09-07 07:23:03'),
-(112, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/usuarios', '2024-09-07 07:23:04'),
-(113, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/usuarios/roles', '2024-09-07 07:23:04'),
-(114, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/usuarios/person', '2024-09-07 07:23:04'),
-(115, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/usuarios', '2024-09-07 07:23:04'),
-(116, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/roles', '2024-09-07 07:23:05'),
-(117, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/roles', '2024-09-07 07:23:05'),
-(118, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/personas', '2024-09-07 07:23:06'),
-(119, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/js/template-customizer.js', '2024-09-07 07:23:06'),
-(120, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/roles', '2024-09-07 07:23:09'),
-(121, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/roles', '2024-09-07 07:23:09'),
-(122, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:23:11'),
-(123, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:23:12'),
-(124, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/submenus', '2024-09-07 07:23:26'),
-(125, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus', '2024-09-07 07:23:26'),
-(126, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus/menus', '2024-09-07 07:23:28'),
-(127, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus/search', '2024-09-07 07:23:28'),
-(128, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/submenus', '2024-09-07 07:24:18'),
-(129, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/submenus', '2024-09-07 07:24:19'),
-(130, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/personas', '2024-09-07 07:24:20'),
-(131, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/personas', '2024-09-07 07:24:20'),
-(132, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:24:33'),
-(133, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:24:33'),
-(134, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/crud', '2024-09-07 07:24:33'),
-(135, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/js/app/plugins/autosize.min.js', '2024-09-07 07:24:33'),
-(136, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/permisos', '2024-09-07 07:24:34'),
-(137, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos', '2024-09-07 07:24:35'),
-(138, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:36'),
-(139, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:36'),
-(140, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:37'),
-(141, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:37'),
-(142, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:38'),
-(143, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:38'),
-(144, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:39'),
-(145, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:39'),
-(146, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/permisos/active', '2024-09-07 07:24:40'),
-(147, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:24:40'),
-(148, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/usuarios', '2024-09-07 07:24:42'),
-(149, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/usuarios/person', '2024-09-07 07:24:42'),
-(150, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/usuarios/roles', '2024-09-07 07:24:42'),
-(151, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/usuarios', '2024-09-07 07:24:42'),
-(152, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/personas', '2024-09-07 07:24:43'),
-(153, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/personas', '2024-09-07 07:24:43'),
-(154, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin/roles', '2024-09-07 07:24:44'),
-(155, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'POST', '/admin/roles', '2024-09-07 07:24:44'),
-(156, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/admin', '2024-09-07 07:24:45');
 
 -- --------------------------------------------------------
 
@@ -254,7 +419,10 @@ CREATE TABLE `sis_menus` (
 
 INSERT INTO `sis_menus` (`idmenu`, `men_nombre`, `men_url`, `men_externo`, `men_controlador`, `men_icono`, `men_url_si`, `men_orden`, `men_visible`, `men_fecha`) VALUES
 (1, 'Maestras', '#', 0, NULL, 'bx-lock-open-alt', 0, 10, 1, '2023-03-06 12:39:09'),
-(2, 'Usuarios', '#', 0, NULL, 'bx-circle', 0, 5, 1, '2023-03-07 00:41:34');
+(2, 'Modulo Usuarios', '#', 0, NULL, 'bx-circle', 0, 1, 1, '2023-03-07 00:41:34'),
+(10, 'Modulo Inventario', '#', 0, NULL, 'bx-package', 0, 2, 1, '2024-10-08 01:35:58'),
+(11, 'Modulo Laboratorio', '#', 0, NULL, 'bx-circle', 0, 3, 1, '2024-10-08 01:36:07'),
+(12, 'Modulo Ocurrencias', '#', 0, NULL, 'bx-circle', 0, 4, 1, '2024-10-08 01:36:14');
 
 -- --------------------------------------------------------
 
@@ -283,7 +451,10 @@ INSERT INTO `sis_permisos` (`idpermisos`, `idrol`, `idsubmenu`, `perm_r`, `perm_
 (6, 1, 13, 1, 1, 1, 1),
 (7, 1, 4, 1, 1, 1, 1),
 (8, 1, 7, 1, 1, 1, 1),
-(9, 1, 8, 1, 1, 1, 1);
+(9, 1, 8, 1, 1, 1, 1),
+(10, 1, 20, 1, 1, 1, 1),
+(11, 1, 21, 1, 1, 1, 1),
+(12, 1, 22, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -398,11 +569,14 @@ CREATE TABLE `sis_submenus` (
 INSERT INTO `sis_submenus` (`idsubmenu`, `idmenu`, `sub_nombre`, `sub_url`, `sub_externo`, `sub_controlador`, `sub_metodo`, `sub_icono`, `sub_orden`, `sub_visible`, `sub_fecha`) VALUES
 (1, 1, 'Menús', '/admin/menus', 0, 'MenusController', 'index', 'bx-menu', 1, 1, '2023-03-06 12:41:05'),
 (2, 1, 'Submenús', '/admin/submenus', 0, 'SubmenusController', 'index', 'bx-menu-alt-right', 2, 1, '2023-03-06 12:41:44'),
-(3, 1, 'Permisos', '/admin/permisos', 0, 'PermisosController', 'index', 'bx-key', 3, 1, '2023-03-06 12:42:10'),
+(3, 1, 'Permisos', '/admin/permisos', 0, 'PermisosController', 'index', 'bx-key', 4, 1, '2023-03-06 12:42:10'),
 (4, 2, 'Usuarios', '/admin/usuarios', 0, 'UsuariosController', 'index', 'bx-user', 2, 1, '2023-03-07 00:43:11'),
 (7, 2, 'Personal', '/admin/personas', 0, 'PersonasController', 'index', 'bxs-user', 1, 1, '2023-03-07 19:44:33'),
 (8, 2, 'Roles', '/admin/roles', 0, 'RolesController', 'index', 'bx-ruler', 3, 1, '2023-03-07 19:44:54'),
-(13, 1, 'Crud', '/admin/crud', 0, 'CrudController', 'index', 'bx-edit', 4, 1, '2024-06-04 18:46:27');
+(13, 1, 'Crud', '/admin/crud', 0, 'CrudController', 'index', 'bx-edit', 6, 1, '2024-06-04 18:46:27'),
+(20, 1, 'database', '/admin/database', 0, 'DataBaseController', 'index', 'bx-data text-info', 5, 1, '2024-10-08 01:42:39'),
+(21, 10, 'Materiales', '/admin/inventario', 0, 'MaterialesController', 'index', 'bx-circle', 1, 1, '2024-10-10 23:14:22'),
+(22, 10, 'Ingresos', '/admin/ingresos', 0, 'IngresosController', 'index', 'bx-circle', 2, 1, '2024-10-13 12:27:57');
 
 -- --------------------------------------------------------
 
@@ -548,13 +722,6 @@ CREATE TABLE `web_visitas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
--- Volcado de datos para la tabla `web_visitas`
---
-
-INSERT INTO `web_visitas` (`idvisita`, `vis_cod`, `idwebusuario`, `vis_ip`, `vis_agente`, `vis_method`, `vis_url`, `vis_fechahora`) VALUES
-(1, 7795, 0, ' IP: ::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36', 'GET', '/', '2024-09-07 07:04:35');
-
---
 -- Índices para tablas volcadas
 --
 
@@ -563,6 +730,98 @@ INSERT INTO `web_visitas` (`idvisita`, `vis_cod`, `idwebusuario`, `vis_ip`, `vis
 --
 ALTER TABLE `crud_modulo`
   ADD PRIMARY KEY (`idmod`);
+
+--
+-- Indices de la tabla `lab_balance_inventarios`
+--
+ALTER TABLE `lab_balance_inventarios`
+  ADD PRIMARY KEY (`idbalance`),
+  ADD KEY `lab_materiales_lab_balance_inventarios_fk` (`idmaterial`),
+  ADD KEY `lab_insumos_lab_balance_inventarios_fk` (`idinsumo`),
+  ADD KEY `lab_productos_lab_balance_inventarios_fk` (`idproducto`);
+
+--
+-- Indices de la tabla `lab_condiciones`
+--
+ALTER TABLE `lab_condiciones`
+  ADD PRIMARY KEY (`idcondicion`);
+
+--
+-- Indices de la tabla `lab_detalle_inventarios`
+--
+ALTER TABLE `lab_detalle_inventarios`
+  ADD PRIMARY KEY (`idinventariodetalle`),
+  ADD KEY `lab_inventarios_lab_detalle_inventarios_fk` (`idinventario`),
+  ADD KEY `lab_unidades_medidas_lab_inventarios_fk` (`idmedida`),
+  ADD KEY `lab_condiciones_lab_existencias_fk` (`idcondicion`),
+  ADD KEY `lab_materiales_lab_detalle_inventarios_fk` (`idmaterial`),
+  ADD KEY `lab_insumos_lab_detalle_inventarios_fk` (`idinsumo`),
+  ADD KEY `lab_productos_lab_detalle_inventarios_fk` (`idproducto`);
+
+--
+-- Indices de la tabla `lab_docentes`
+--
+ALTER TABLE `lab_docentes`
+  ADD PRIMARY KEY (`iddocente`);
+
+--
+-- Indices de la tabla `lab_ingresos_laboratorios`
+--
+ALTER TABLE `lab_ingresos_laboratorios`
+  ADD PRIMARY KEY (`idingreso`),
+  ADD KEY `lab_docentes_lab_ingresos_laboratorios_fk` (`iddocente`);
+
+--
+-- Indices de la tabla `lab_insumos`
+--
+ALTER TABLE `lab_insumos`
+  ADD PRIMARY KEY (`idinsumo`);
+
+--
+-- Indices de la tabla `lab_inventarios`
+--
+ALTER TABLE `lab_inventarios`
+  ADD PRIMARY KEY (`idinventario`);
+
+--
+-- Indices de la tabla `lab_materiales`
+--
+ALTER TABLE `lab_materiales`
+  ADD PRIMARY KEY (`idmaterial`);
+
+--
+-- Indices de la tabla `lab_movimientos`
+--
+ALTER TABLE `lab_movimientos`
+  ADD PRIMARY KEY (`idmovimiento`),
+  ADD KEY `lab_inventarios_lab_movimientos_fk` (`idinventariodetalle`);
+
+--
+-- Indices de la tabla `lab_ocurrencias`
+--
+ALTER TABLE `lab_ocurrencias`
+  ADD PRIMARY KEY (`idocurrencia`),
+  ADD KEY `lab_prestamos_lab_ocurrencias_fk` (`idprestamo`),
+  ADD KEY `lab_inventarios_lab_ocurrencias_fk` (`idinventario`);
+
+--
+-- Indices de la tabla `lab_prestamos`
+--
+ALTER TABLE `lab_prestamos`
+  ADD PRIMARY KEY (`idprestamo`),
+  ADD KEY `lab_ingresos_laboratorios_lab_prestamos_fk` (`idingreso`);
+
+--
+-- Indices de la tabla `lab_productos`
+--
+ALTER TABLE `lab_productos`
+  ADD PRIMARY KEY (`idproducto`);
+
+--
+-- Indices de la tabla `lab_unidades_medidas`
+--
+ALTER TABLE `lab_unidades_medidas`
+  ADD PRIMARY KEY (`idmedida`);
 
 --
 -- Indices de la tabla `sis_centinela`
@@ -659,10 +918,88 @@ ALTER TABLE `crud_modulo`
   MODIFY `idmod` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `lab_balance_inventarios`
+--
+ALTER TABLE `lab_balance_inventarios`
+  MODIFY `idbalance` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_condiciones`
+--
+ALTER TABLE `lab_condiciones`
+  MODIFY `idcondicion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_detalle_inventarios`
+--
+ALTER TABLE `lab_detalle_inventarios`
+  MODIFY `idinventariodetalle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_docentes`
+--
+ALTER TABLE `lab_docentes`
+  MODIFY `iddocente` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_ingresos_laboratorios`
+--
+ALTER TABLE `lab_ingresos_laboratorios`
+  MODIFY `idingreso` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_insumos`
+--
+ALTER TABLE `lab_insumos`
+  MODIFY `idinsumo` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_inventarios`
+--
+ALTER TABLE `lab_inventarios`
+  MODIFY `idinventario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_materiales`
+--
+ALTER TABLE `lab_materiales`
+  MODIFY `idmaterial` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_movimientos`
+--
+ALTER TABLE `lab_movimientos`
+  MODIFY `idmovimiento` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_ocurrencias`
+--
+ALTER TABLE `lab_ocurrencias`
+  MODIFY `idocurrencia` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_prestamos`
+--
+ALTER TABLE `lab_prestamos`
+  MODIFY `idprestamo` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_productos`
+--
+ALTER TABLE `lab_productos`
+  MODIFY `idproducto` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_unidades_medidas`
+--
+ALTER TABLE `lab_unidades_medidas`
+  MODIFY `idmedida` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT de la tabla `sis_centinela`
 --
 ALTER TABLE `sis_centinela`
-  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4163;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_imagenes`
@@ -674,13 +1011,13 @@ ALTER TABLE `sis_imagenes`
 -- AUTO_INCREMENT de la tabla `sis_menus`
 --
 ALTER TABLE `sis_menus`
-  MODIFY `idmenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idmenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_permisos`
 --
 ALTER TABLE `sis_permisos`
-  MODIFY `idpermisos` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idpermisos` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_personal`
@@ -710,7 +1047,7 @@ ALTER TABLE `sis_server_email`
 -- AUTO_INCREMENT de la tabla `sis_submenus`
 --
 ALTER TABLE `sis_submenus`
-  MODIFY `idsubmenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `idsubmenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_usuarios`
@@ -740,7 +1077,47 @@ ALTER TABLE `web_submenus`
 -- AUTO_INCREMENT de la tabla `web_visitas`
 --
 ALTER TABLE `web_visitas`
-  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `lab_balance_inventarios`
+--
+ALTER TABLE `lab_balance_inventarios`
+  ADD CONSTRAINT `lab_insumos_lab_balance_inventarios_fk` FOREIGN KEY (`idinsumo`) REFERENCES `lab_insumos` (`idinsumo`),
+  ADD CONSTRAINT `lab_materiales_lab_balance_inventarios_fk` FOREIGN KEY (`idmaterial`) REFERENCES `lab_materiales` (`idmaterial`),
+  ADD CONSTRAINT `lab_productos_lab_balance_inventarios_fk` FOREIGN KEY (`idproducto`) REFERENCES `lab_productos` (`idproducto`);
+
+--
+-- Filtros para la tabla `lab_detalle_inventarios`
+--
+ALTER TABLE `lab_detalle_inventarios`
+  ADD CONSTRAINT `lab_condiciones_lab_existencias_fk` FOREIGN KEY (`idcondicion`) REFERENCES `lab_condiciones` (`idcondicion`),
+  ADD CONSTRAINT `lab_insumos_lab_detalle_inventarios_fk` FOREIGN KEY (`idinsumo`) REFERENCES `lab_insumos` (`idinsumo`),
+  ADD CONSTRAINT `lab_materiales_lab_detalle_inventarios_fk` FOREIGN KEY (`idmaterial`) REFERENCES `lab_materiales` (`idmaterial`),
+  ADD CONSTRAINT `lab_productos_lab_detalle_inventarios_fk` FOREIGN KEY (`idproducto`) REFERENCES `lab_productos` (`idproducto`),
+  ADD CONSTRAINT `lab_unidades_medidas_lab_inventarios_fk` FOREIGN KEY (`idmedida`) REFERENCES `lab_unidades_medidas` (`idmedida`);
+
+--
+-- Filtros para la tabla `lab_ingresos_laboratorios`
+--
+ALTER TABLE `lab_ingresos_laboratorios`
+  ADD CONSTRAINT `lab_docentes_lab_ingresos_laboratorios_fk` FOREIGN KEY (`iddocente`) REFERENCES `lab_docentes` (`iddocente`);
+
+--
+-- Filtros para la tabla `lab_ocurrencias`
+--
+ALTER TABLE `lab_ocurrencias`
+  ADD CONSTRAINT `lab_prestamos_lab_ocurrencias_fk` FOREIGN KEY (`idprestamo`) REFERENCES `lab_prestamos` (`idprestamo`);
+
+--
+-- Filtros para la tabla `lab_prestamos`
+--
+ALTER TABLE `lab_prestamos`
+  ADD CONSTRAINT `lab_ingresos_laboratorios_lab_prestamos_fk` FOREIGN KEY (`idingreso`) REFERENCES `lab_ingresos_laboratorios` (`idingreso`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

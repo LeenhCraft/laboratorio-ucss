@@ -156,7 +156,11 @@ class Model
     {
         if (is_callable($column)) {
             $tempWhere = $this->where; //guardamos el where actual
-            $tempWhere .= " OR (";
+            if ($tempWhere == "") {
+                $tempWhere = " (" . $tempWhere;
+            } else {
+                $tempWhere .= " OR (";
+            }
             $this->where = "";
             $column($this);
             $temp2Where = $this->where;

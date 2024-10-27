@@ -1989,17 +1989,17 @@ progress {
 }
 
 .table-info {
-  --bs-table-color: #435971;
-  --bs-table-bg: #cdf3fb;
-  --bs-table-border-color: #bfe4ed;
-  --bs-table-striped-bg: #c9eef7;
-  --bs-table-striped-color: #435971;
-  --bs-table-active-bg: #bfe4ed;
-  --bs-table-active-color: #435971;
-  --bs-table-hover-bg: #c5eaf3;
-  --bs-table-hover-color: #435971;
-  color: var(--bs-table-color);
-  border-color: var(--bs-table-border-color)
+  --bs-table-color: #22303e;
+    --bs-table-bg: #cdf3fb;
+    --bs-table-border-color: #b8dce4;
+    --bs-table-striped-bg: #c3e7f0;
+    --bs-table-striped-color: #22303e;
+    --bs-table-active-bg: #bfe3ec;
+    --bs-table-active-color: #22303e;
+    --bs-table-hover-bg: #c3e7f0;
+    --bs-table-hover-color: #22303e;
+    color: var(--bs-table-color);
+    border-color: var(--bs-table-border-color)
 }
 
 .table-warning {
@@ -2032,7 +2032,7 @@ progress {
 
 .table-light {
   --bs-table-color: #435971;
-  --bs-table-bg: #fcfdfd;
+  --bs-table-bg: #dbdee0;
   --bs-table-border-color: #eaedef;
   --bs-table-striped-bg: #f6f8f9;
   --bs-table-striped-color: #435971;
@@ -7169,14 +7169,14 @@ a.invert-bg-dark:hover, a.invert-bg-dark:focus {
 
 .table-info {
   --bs-table-bg: #cdf3fb;
-  --bs-table-striped-bg: #c9eef7;
-  --bs-table-striped-color: #435971;
-  --bs-table-active-bg: #bfe4ed;
-  --bs-table-active-color: #435971;
-  --bs-table-hover-bg: #c5eaf3;
-  --bs-table-hover-color: #435971;
-  color: #435971;
-  border-color: #bfe4ed
+  --bs-table-striped-bg: #c3e7f0;
+  --bs-table-striped-color: #22303e;
+  --bs-table-active-bg: #bfe3ec;
+  --bs-table-active-color: #22303e;
+  --bs-table-hover-bg: #c3e7f0;
+  --bs-table-hover-color: #22303e;
+  color: #22303e;
+  border-color: #b8dce4
 }
 
 .table-info th {
@@ -7228,15 +7228,17 @@ a.invert-bg-dark:hover, a.invert-bg-dark:focus {
 }
 
 .table-light {
-  --bs-table-bg: #fcfdfd;
-  --bs-table-striped-bg: #f6f8f9;
-  --bs-table-striped-color: #435971;
-  --bs-table-active-bg: #eaedef;
-  --bs-table-active-color: #435971;
-  --bs-table-hover-bg: #f1f3f5;
-  --bs-table-hover-color: #435971;
-  color: #435971;
-  border-color: #eaedef
+  --bs-table-color: #22303e;
+    --bs-table-bg: #dbdee0;
+    --bs-table-border-color: #c5c9cd;
+    --bs-table-striped-bg: #d0d4d6;
+    --bs-table-striped-color: #22303e;
+    --bs-table-active-bg: #ccd0d3;
+    --bs-table-active-color: #22303e;
+    --bs-table-hover-bg: #d0d4d6;
+    --bs-table-hover-color: #22303e;
+    color: var(--bs-table-color);
+    border-color: var(--bs-table-border-color)
 }
 
 .table-light th {

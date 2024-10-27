@@ -10,7 +10,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/img/logo.png">
+    <link rel="icon" type="image/png" href="/favicon.ico">
     <!-- <link rel="icon" type="image/x-icon" href="/img/favicon/favicon.ico" /> -->
 
     <!-- Fonts -->

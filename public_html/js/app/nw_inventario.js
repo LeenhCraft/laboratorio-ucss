@@ -229,11 +229,10 @@ function resetForm() {
   $("#tipo_material_original").val("");
 }
 
-
-function fntDel(id){
+function fntDel(id) {
   Swal.fire({
     text: "No se puede eliminar este registro.",
-    icon: 'info',
-    confirmButtonText: 'OK'
+    icon: "info",
+    confirmButtonText: "OK",
   });
 }

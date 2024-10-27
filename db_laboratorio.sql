@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 16-10-2024 a las 05:38:59
+-- Tiempo de generación: 27-10-2024 a las 00:55:50
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -72,7 +72,8 @@ INSERT INTO `lab_balance_inventarios` (`idbalance`, `idproducto`, `idinsumo`, `i
 (12, NULL, NULL, 5, 0, 1, 1, 0, '2024-10-15 17:42:06', '2024-10-15 17:42:06'),
 (13, NULL, NULL, 4, 0, 1, 1, 0, '2024-10-15 17:42:20', '2024-10-15 17:42:20'),
 (14, NULL, NULL, 6, 0, 1, 1, 0, '2024-10-15 17:42:28', '2024-10-15 17:42:28'),
-(15, NULL, NULL, 7, 0, 1, 1, 0, '2024-10-15 17:42:35', '2024-10-15 17:42:35');
+(15, NULL, NULL, 7, 0, 1, 1, 0, '2024-10-15 17:42:35', '2024-10-15 17:42:35'),
+(16, NULL, NULL, 8, 0, 10, 10, 0, '2024-10-26 19:50:47', '2024-10-26 19:49:53');
 
 -- --------------------------------------------------------
 
@@ -137,7 +138,46 @@ INSERT INTO `lab_detalle_inventarios` (`idinventariodetalle`, `idinventario`, `i
 (23, 12, NULL, NULL, 5, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:06'),
 (24, 12, NULL, NULL, 4, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:20'),
 (25, 12, NULL, NULL, 6, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:28'),
-(26, 12, NULL, NULL, 7, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:35');
+(26, 12, NULL, NULL, 7, 2, 1, 2, 1.00, NULL, NULL, '2024-10-15 17:42:35'),
+(28, 13, NULL, NULL, 8, 2, 10, 2, 1.00, NULL, NULL, '2024-10-26 19:50:47');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lab_detalle_prestamos`
+--
+
+CREATE TABLE `lab_detalle_prestamos` (
+  `iddetalle` int NOT NULL,
+  `idprestamo` int NOT NULL,
+  `idinventariodetalle` int NOT NULL,
+  `cantidad` int NOT NULL DEFAULT '1',
+  `estado` varchar(45) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_detalle_prestamos`
+--
+
+INSERT INTO `lab_detalle_prestamos` (`iddetalle`, `idprestamo`, `idinventariodetalle`, `cantidad`, `estado`, `fecha_registro`) VALUES
+(1, 1, 16, 3, NULL, '2024-10-18 18:21:18'),
+(2, 1, 15, 1, NULL, '2024-10-18 18:42:41'),
+(3, 1, 21, 2, NULL, '2024-10-18 18:43:24'),
+(4, 2, 26, 1, NULL, '2024-10-18 19:19:00'),
+(5, 3, 12, 1, NULL, '2024-10-26 19:38:17'),
+(6, 3, 16, 1, NULL, '2024-10-26 19:38:19'),
+(7, 3, 17, 1, NULL, '2024-10-26 19:38:22'),
+(8, 3, 19, 1, NULL, '2024-10-26 19:38:24'),
+(9, 3, 21, 1, NULL, '2024-10-26 19:38:26'),
+(10, 3, 23, 1, NULL, '2024-10-26 19:38:28'),
+(11, 3, 26, 1, NULL, '2024-10-26 19:38:30'),
+(12, 3, 13, 1, NULL, '2024-10-26 19:38:43'),
+(13, 3, 14, 1, NULL, '2024-10-26 19:45:04'),
+(14, 3, 15, 1, NULL, '2024-10-26 19:45:07'),
+(15, 3, 18, 1, NULL, '2024-10-26 19:45:15'),
+(16, 4, 28, 1, NULL, '2024-10-26 19:52:10'),
+(17, 4, 21, 1, NULL, '2024-10-26 19:52:13');
 
 -- --------------------------------------------------------
 
@@ -151,6 +191,17 @@ CREATE TABLE `lab_docentes` (
   `codigo` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
   `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_docentes`
+--
+
+INSERT INTO `lab_docentes` (`iddocente`, `nombre`, `codigo`, `fecha_registro`) VALUES
+(1, 'Leenh Bustamante', '2018100486', '2024-10-17 12:46:53'),
+(2, 'Rocio Benites', '2018100654', '2024-10-17 12:47:33'),
+(3, 'Jean Benites', '2018445486', '2024-10-17 12:48:17'),
+(4, 'Mattwes', '2018100000', '2024-10-17 16:43:44'),
+(5, 'Nose', '2018100488', '2024-10-26 19:51:23');
 
 -- --------------------------------------------------------
 
@@ -174,6 +225,22 @@ CREATE TABLE `lab_ingresos_laboratorios` (
   `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_ingresos_laboratorios`
+--
+
+INSERT INTO `lab_ingresos_laboratorios` (`idingreso`, `iddocente`, `titulo_practica`, `nro_practicas`, `carrera`, `asignatura`, `turno`, `ciclo`, `fecha`, `hora_inicio`, `hora_fin`, `nro_estudiantes`, `observaciones`, `fecha_registro`) VALUES
+(1, 1, 'practica 1', 0, 'sistemas', 'lenguaje de programación I', 'mañana', '0', '2024-10-17', '08:00:00', '08:45:00', 0, '', '2024-10-17 12:47:05'),
+(2, 2, 'demo 1', 0, 'enfermeria', 'matar gente', 'mañana', '0', '2024-10-15', '10:00:00', '12:00:00', 0, '', '2024-10-17 12:47:49'),
+(3, 3, 'reserva', 0, 'ingeniería de sistemas', 'toma de muestras', 'noche', '0', '2024-10-17', '16:00:00', '15:30:00', 0, '', '2024-10-17 12:48:51'),
+(4, 4, 'Titulo', 0, 'Carrera', 'Asignatura', 'mañana', '5', '2024-10-18', '07:00:00', '07:45:00', 0, '', '2024-10-17 16:44:00'),
+(5, 1, 'Asd', 0, 'Asd', 'Asd', 'asd', '0', '2024-10-09', '16:45:00', '16:45:00', 0, '', '2024-10-17 16:45:25'),
+(6, 1, 'Asd', 0, 'Asd123', 'Asd23', 'noche', '0', '2024-10-30', '16:45:00', '16:45:00', 0, '', '2024-10-17 16:45:40'),
+(7, 2, 'Ingreso A Laboratorio', 0, '-', '-', '-', '0', '2024-10-19', '10:00:00', '10:45:00', 0, '', '2024-10-18 18:45:47'),
+(8, 1, 'Hoy En La Mañana', 0, 'Hoy En La Mañana', 'Hoy En La Mañana', 'mañana', '0', '2024-10-18', '08:00:00', '08:45:00', 0, '', '2024-10-18 19:17:50'),
+(9, 1, 'Vgalia', 1, 'Computacion', 'Computacion', 'tarde', '4', '2024-10-26', '14:00:00', '17:00:00', 12, '', '2024-10-26 19:34:01'),
+(10, 5, 'Demo', 2, 'Sistemas', 'Lenguaje De Programación I', 'noche', '0', '2024-10-26', '19:50:00', '20:35:00', 32, '', '2024-10-26 19:51:41');
 
 -- --------------------------------------------------------
 
@@ -236,7 +303,8 @@ INSERT INTO `lab_inventarios` (`idinventario`, `codigo`, `fecha_ingreso`, `motiv
 (8, 'IN-0007', '2024-10-10', 3, 2, NULL, '2024-10-15 08:06:34'),
 (9, 'IN-0008', '2024-10-11', 3, 2, NULL, '2024-10-15 08:06:48'),
 (11, 'IN-0010', '2024-10-15', 1, 1, NULL, '2024-10-15 12:05:06'),
-(12, 'IN-0011', '2024-10-15', 1, 2, NULL, '2024-10-15 17:13:48');
+(12, 'IN-0011', '2024-10-15', 1, 2, NULL, '2024-10-15 17:13:48'),
+(13, 'IN-0012', '2024-10-26', 3, 2, NULL, '2024-10-26 19:49:12');
 
 -- --------------------------------------------------------
 
@@ -265,7 +333,8 @@ INSERT INTO `lab_materiales` (`idmaterial`, `nombre`, `modelo`, `codigo_ucss`, `
 (4, 'Balanza de Pie Health o meter', '100KG QTY', '028581', 0.00, NULL, '2024-10-15 08:16:33'),
 (5, 'Balanza Neonatal Health o meter', '100KG QTY', '028582', 0.00, NULL, '2024-10-15 08:16:51'),
 (6, 'Balanza pediátrica de 10-20 Kg', '549KL', '028532', 0.00, NULL, '2024-10-15 08:17:00'),
-(7, 'Balanza pediátrica de 20 Kg (Digital)', 'M108800', '019203', 0.00, NULL, '2024-10-15 08:17:11');
+(7, 'Balanza pediátrica de 20 Kg (Digital)', 'M108800', '019203', 0.00, NULL, '2024-10-15 08:17:11'),
+(8, 'Balón de oxígeno grande', NULL, NULL, 0.00, NULL, '2024-10-26 19:48:58');
 
 -- --------------------------------------------------------
 
@@ -288,41 +357,26 @@ CREATE TABLE `lab_movimientos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `lab_ocurrencias`
---
-
-CREATE TABLE `lab_ocurrencias` (
-  `idocurrencia` int NOT NULL,
-  `idprestamo` int NOT NULL,
-  `idinventario` int NOT NULL,
-  `iddocente` int NOT NULL DEFAULT '0',
-  `idingreso` int NOT NULL DEFAULT '0',
-  `estudiante` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
-  `cantidad` decimal(7,2) NOT NULL DEFAULT '1.00',
-  `fecha` date NOT NULL,
-  `descripcion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `lab_prestamos`
 --
 
 CREATE TABLE `lab_prestamos` (
   `idprestamo` int NOT NULL,
   `idingreso` int NOT NULL,
-  `iddocente` int NOT NULL DEFAULT '0',
-  `asignatura` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
-  `carrera` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
-  `turno` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci NOT NULL,
   `fecha` date NOT NULL,
-  `hora_inicio` time NOT NULL,
-  `hora_fin` time NOT NULL,
-  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `observaciones` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `fecha_registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `lab_prestamos`
+--
+
+INSERT INTO `lab_prestamos` (`idprestamo`, `idingreso`, `fecha`, `observaciones`, `fecha_registro`) VALUES
+(1, 4, '2024-10-18', NULL, '2024-10-18 18:21:18'),
+(2, 8, '2024-10-18', NULL, '2024-10-18 19:18:59'),
+(3, 9, '2024-10-26', NULL, '2024-10-26 19:38:17'),
+(4, 10, '2024-10-26', NULL, '2024-10-26 19:52:10');
 
 -- --------------------------------------------------------
 
@@ -418,11 +472,11 @@ CREATE TABLE `sis_menus` (
 --
 
 INSERT INTO `sis_menus` (`idmenu`, `men_nombre`, `men_url`, `men_externo`, `men_controlador`, `men_icono`, `men_url_si`, `men_orden`, `men_visible`, `men_fecha`) VALUES
-(1, 'Maestras', '#', 0, NULL, 'bx-lock-open-alt', 0, 10, 1, '2023-03-06 12:39:09'),
-(2, 'Modulo Usuarios', '#', 0, NULL, 'bx-circle', 0, 1, 1, '2023-03-07 00:41:34'),
-(10, 'Modulo Inventario', '#', 0, NULL, 'bx-package', 0, 2, 1, '2024-10-08 01:35:58'),
-(11, 'Modulo Laboratorio', '#', 0, NULL, 'bx-circle', 0, 3, 1, '2024-10-08 01:36:07'),
-(12, 'Modulo Ocurrencias', '#', 0, NULL, 'bx-circle', 0, 4, 1, '2024-10-08 01:36:14');
+(1, 'Maestras', '#', 0, NULL, 'bx bx-lock-open-alt', 0, 10, 1, '2023-03-06 12:39:09'),
+(2, 'Modulo Usuarios', '#', 0, NULL, 'bx bx-circle', 0, 2, 1, '2023-03-07 00:41:34'),
+(10, 'Modulo Inventario', '#', 0, NULL, 'bx bx-package', 0, 3, 1, '2024-10-08 01:35:58'),
+(11, 'Modulo Laboratorio', '#', 0, NULL, 'fa-solid fa-flask', 0, 1, 1, '2024-10-08 01:36:07'),
+(12, 'Modulo Ocurrencias', '#', 0, NULL, 'bx bx-circle', 0, 4, 1, '2024-10-08 01:36:14');
 
 -- --------------------------------------------------------
 
@@ -454,7 +508,9 @@ INSERT INTO `sis_permisos` (`idpermisos`, `idrol`, `idsubmenu`, `perm_r`, `perm_
 (9, 1, 8, 1, 1, 1, 1),
 (10, 1, 20, 1, 1, 1, 1),
 (11, 1, 21, 1, 1, 1, 1),
-(12, 1, 22, 1, 1, 1, 1);
+(12, 1, 22, 1, 1, 1, 1),
+(13, 1, 23, 1, 1, 1, 0),
+(14, 1, 24, 1, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -576,7 +632,9 @@ INSERT INTO `sis_submenus` (`idsubmenu`, `idmenu`, `sub_nombre`, `sub_url`, `sub
 (13, 1, 'Crud', '/admin/crud', 0, 'CrudController', 'index', 'bx-edit', 6, 1, '2024-06-04 18:46:27'),
 (20, 1, 'database', '/admin/database', 0, 'DataBaseController', 'index', 'bx-data text-info', 5, 1, '2024-10-08 01:42:39'),
 (21, 10, 'Materiales', '/admin/inventario', 0, 'MaterialesController', 'index', 'bx-circle', 1, 1, '2024-10-10 23:14:22'),
-(22, 10, 'Ingresos', '/admin/ingresos', 0, 'IngresosController', 'index', 'bx-circle', 2, 1, '2024-10-13 12:27:57');
+(22, 10, 'Ingresos', '/admin/ingresos', 0, 'IngresosController', 'index', 'bx-circle', 2, 1, '2024-10-13 12:27:57'),
+(23, 11, 'Ingresos laboratorio', '/admin/laboratorio', 0, 'LaboratorioController', 'index', 'bx-circle', 1, 1, '2024-10-17 12:31:40'),
+(24, 11, 'Ocurrencias', '#', 0, '#', 'index', 'bx-circle', 2, 1, '2024-10-17 12:36:01');
 
 -- --------------------------------------------------------
 
@@ -597,7 +655,7 @@ CREATE TABLE `sis_tareas_ejecutables` (
 --
 
 INSERT INTO `sis_tareas_ejecutables` (`idtarea`, `ta_name`, `ta_description`, `ta_execute`, `ta_fecha`) VALUES
-(5, 'Delete Centinela Y Visitas', '', 'DELETE FROM `sis_centinela`;\r\nDELETE FROM `web_visitas`;', '2023-03-24 19:30:52');
+(5, 'Delete Centinela Y Visitas', '', 'DELETE FROM `sis_centinela`;\nDELETE FROM `web_visitas`;', '2023-03-24 19:30:52');
 
 -- --------------------------------------------------------
 
@@ -759,6 +817,14 @@ ALTER TABLE `lab_detalle_inventarios`
   ADD KEY `lab_productos_lab_detalle_inventarios_fk` (`idproducto`);
 
 --
+-- Indices de la tabla `lab_detalle_prestamos`
+--
+ALTER TABLE `lab_detalle_prestamos`
+  ADD PRIMARY KEY (`iddetalle`),
+  ADD KEY `lab_prestamos_lab_detalle_prestamos_fk` (`idprestamo`),
+  ADD KEY `lab_detalle_inventarios_lab_detalle_prestamos_fk` (`idinventariodetalle`);
+
+--
 -- Indices de la tabla `lab_docentes`
 --
 ALTER TABLE `lab_docentes`
@@ -795,14 +861,6 @@ ALTER TABLE `lab_materiales`
 ALTER TABLE `lab_movimientos`
   ADD PRIMARY KEY (`idmovimiento`),
   ADD KEY `lab_inventarios_lab_movimientos_fk` (`idinventariodetalle`);
-
---
--- Indices de la tabla `lab_ocurrencias`
---
-ALTER TABLE `lab_ocurrencias`
-  ADD PRIMARY KEY (`idocurrencia`),
-  ADD KEY `lab_prestamos_lab_ocurrencias_fk` (`idprestamo`),
-  ADD KEY `lab_inventarios_lab_ocurrencias_fk` (`idinventario`);
 
 --
 -- Indices de la tabla `lab_prestamos`
@@ -878,6 +936,12 @@ ALTER TABLE `sis_submenus`
   ADD PRIMARY KEY (`idsubmenu`);
 
 --
+-- Indices de la tabla `sis_tareas_ejecutables`
+--
+ALTER TABLE `sis_tareas_ejecutables`
+  ADD PRIMARY KEY (`idtarea`);
+
+--
 -- Indices de la tabla `sis_usuarios`
 --
 ALTER TABLE `sis_usuarios`
@@ -921,7 +985,7 @@ ALTER TABLE `crud_modulo`
 -- AUTO_INCREMENT de la tabla `lab_balance_inventarios`
 --
 ALTER TABLE `lab_balance_inventarios`
-  MODIFY `idbalance` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `idbalance` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_condiciones`
@@ -933,19 +997,25 @@ ALTER TABLE `lab_condiciones`
 -- AUTO_INCREMENT de la tabla `lab_detalle_inventarios`
 --
 ALTER TABLE `lab_detalle_inventarios`
-  MODIFY `idinventariodetalle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `idinventariodetalle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT de la tabla `lab_detalle_prestamos`
+--
+ALTER TABLE `lab_detalle_prestamos`
+  MODIFY `iddetalle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_docentes`
 --
 ALTER TABLE `lab_docentes`
-  MODIFY `iddocente` int NOT NULL AUTO_INCREMENT;
+  MODIFY `iddocente` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_ingresos_laboratorios`
 --
 ALTER TABLE `lab_ingresos_laboratorios`
-  MODIFY `idingreso` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idingreso` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_insumos`
@@ -957,13 +1027,13 @@ ALTER TABLE `lab_insumos`
 -- AUTO_INCREMENT de la tabla `lab_inventarios`
 --
 ALTER TABLE `lab_inventarios`
-  MODIFY `idinventario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `idinventario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_materiales`
 --
 ALTER TABLE `lab_materiales`
-  MODIFY `idmaterial` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `idmaterial` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_movimientos`
@@ -972,16 +1042,10 @@ ALTER TABLE `lab_movimientos`
   MODIFY `idmovimiento` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `lab_ocurrencias`
---
-ALTER TABLE `lab_ocurrencias`
-  MODIFY `idocurrencia` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `lab_prestamos`
 --
 ALTER TABLE `lab_prestamos`
-  MODIFY `idprestamo` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idprestamo` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `lab_productos`
@@ -999,7 +1063,7 @@ ALTER TABLE `lab_unidades_medidas`
 -- AUTO_INCREMENT de la tabla `sis_centinela`
 --
 ALTER TABLE `sis_centinela`
-  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4163;
+  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6609;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_imagenes`
@@ -1017,7 +1081,7 @@ ALTER TABLE `sis_menus`
 -- AUTO_INCREMENT de la tabla `sis_permisos`
 --
 ALTER TABLE `sis_permisos`
-  MODIFY `idpermisos` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `idpermisos` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_personal`
@@ -1047,7 +1111,13 @@ ALTER TABLE `sis_server_email`
 -- AUTO_INCREMENT de la tabla `sis_submenus`
 --
 ALTER TABLE `sis_submenus`
-  MODIFY `idsubmenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `idsubmenu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT de la tabla `sis_tareas_ejecutables`
+--
+ALTER TABLE `sis_tareas_ejecutables`
+  MODIFY `idtarea` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `sis_usuarios`
@@ -1077,7 +1147,7 @@ ALTER TABLE `web_submenus`
 -- AUTO_INCREMENT de la tabla `web_visitas`
 --
 ALTER TABLE `web_visitas`
-  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `idvisita` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- Restricciones para tablas volcadas
@@ -1097,9 +1167,17 @@ ALTER TABLE `lab_balance_inventarios`
 ALTER TABLE `lab_detalle_inventarios`
   ADD CONSTRAINT `lab_condiciones_lab_existencias_fk` FOREIGN KEY (`idcondicion`) REFERENCES `lab_condiciones` (`idcondicion`),
   ADD CONSTRAINT `lab_insumos_lab_detalle_inventarios_fk` FOREIGN KEY (`idinsumo`) REFERENCES `lab_insumos` (`idinsumo`),
+  ADD CONSTRAINT `lab_inventarios_lab_detalle_inventarios_fk` FOREIGN KEY (`idinventario`) REFERENCES `lab_inventarios` (`idinventario`),
   ADD CONSTRAINT `lab_materiales_lab_detalle_inventarios_fk` FOREIGN KEY (`idmaterial`) REFERENCES `lab_materiales` (`idmaterial`),
   ADD CONSTRAINT `lab_productos_lab_detalle_inventarios_fk` FOREIGN KEY (`idproducto`) REFERENCES `lab_productos` (`idproducto`),
   ADD CONSTRAINT `lab_unidades_medidas_lab_inventarios_fk` FOREIGN KEY (`idmedida`) REFERENCES `lab_unidades_medidas` (`idmedida`);
+
+--
+-- Filtros para la tabla `lab_detalle_prestamos`
+--
+ALTER TABLE `lab_detalle_prestamos`
+  ADD CONSTRAINT `lab_detalle_inventarios_lab_detalle_prestamos_fk` FOREIGN KEY (`idinventariodetalle`) REFERENCES `lab_detalle_inventarios` (`idinventariodetalle`),
+  ADD CONSTRAINT `lab_prestamos_lab_detalle_prestamos_fk` FOREIGN KEY (`idprestamo`) REFERENCES `lab_prestamos` (`idprestamo`);
 
 --
 -- Filtros para la tabla `lab_ingresos_laboratorios`
@@ -1108,10 +1186,10 @@ ALTER TABLE `lab_ingresos_laboratorios`
   ADD CONSTRAINT `lab_docentes_lab_ingresos_laboratorios_fk` FOREIGN KEY (`iddocente`) REFERENCES `lab_docentes` (`iddocente`);
 
 --
--- Filtros para la tabla `lab_ocurrencias`
+-- Filtros para la tabla `lab_movimientos`
 --
-ALTER TABLE `lab_ocurrencias`
-  ADD CONSTRAINT `lab_prestamos_lab_ocurrencias_fk` FOREIGN KEY (`idprestamo`) REFERENCES `lab_prestamos` (`idprestamo`);
+ALTER TABLE `lab_movimientos`
+  ADD CONSTRAINT `lab_inventarios_lab_movimientos_fk` FOREIGN KEY (`idinventariodetalle`) REFERENCES `lab_detalle_inventarios` (`idinventariodetalle`);
 
 --
 -- Filtros para la tabla `lab_prestamos`

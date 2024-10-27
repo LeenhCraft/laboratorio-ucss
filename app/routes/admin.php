@@ -8,6 +8,7 @@ use App\Controllers\Admin\CentinelaController;
 use App\Controllers\Admin\DashboardController;
 use App\Controllers\Admin\DataBaseController;
 use App\Controllers\Admin\IngresosController;
+use App\Controllers\Admin\LaboratorioController;
 use App\Controllers\Admin\LoginAdminController;
 use App\Controllers\Admin\MaterialesController;
 use App\Controllers\Admin\MenusController;
@@ -148,7 +149,22 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->get('/p', IngresosController::class . ':listProductos');
         $group->get('/e', IngresosController::class . ':listEstadosProductos');
         $group->get('/u', IngresosController::class . ':listUnidadesMedida');
-        
+
         $group->get('/lnh', IngresosController::class . ':cambiarCodigo');
+    })->add(PermissionMiddleware::class);
+
+    $group->group('/laboratorio', function (RouteCollectorProxy $group) {
+        $group->get('', LaboratorioController::class . ':index')->add(new RemoveCsrfMiddleware());
+        $group->post('', LaboratorioController::class . ':list');
+        $group->post('/save', LaboratorioController::class . ':store');
+        $group->post('/update', LaboratorioController::class . ':update');
+        $group->post('/search', LaboratorioController::class . ':search');
+        $group->post('/delete', LaboratorioController::class . ':delete');
+
+        $group->get('/docentes', LaboratorioController::class . ':listDocentes');
+        $group->post('/d', LaboratorioController::class . ':storeDocente');
+        $group->get('/m', LaboratorioController::class . ':listMateriales');
+        $group->post('/lm', LaboratorioController::class . ':listMaterialesIngreso');
+        $group->post('/sm', LaboratorioController::class . ':storeMaterialIngreso');
     })->add(PermissionMiddleware::class);
 })->add(new LoginAdminMiddleware());

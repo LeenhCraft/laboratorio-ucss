@@ -10,7 +10,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/img/logo.png">
+    <link rel="icon" type="image/png" href="/favicon.ico">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="/css/app/appfonts.css">
@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="/css/app/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="/css/app/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="/css/app/custom.css" />
+    <link rel="stylesheet" href="/css/app/demo.css" />
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="/css/app/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
@@ -57,9 +58,9 @@
                     </a>
                 </div>
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body card-content">
                         <!-- Logo -->
-                        <div class="app-brand justify-content-center">
+                        <div class="app-brand justify-content-center mb-3">
                             <a href="/admin/login" class="app-brand-link gap-2">
                                 <picture>
                                     <source srcset="/img/logo.png" type="image/webp">
@@ -68,7 +69,7 @@
                             </a>
                         </div>
                         <!-- /Logo -->
-                        <h4 class="mb-2 text-center text-md-start">Laboratorio UCSS</h4>
+                        <h4 class="mb-2 text-center ff-niconne fs-1">Laboratorio UCSS</h4>
                         <form id="frmlogin" class="mb-3">
                             <input type="hidden" name="<?= $data['tk']['name'] ?>" value="<?= $data['tk']['key'][$data['tk']['name']]  ?>">
                             <input type="hidden" name="<?= $data['tk']['value'] ?>" value="<?= $data['tk']['key'][$data['tk']['value']] ?>">
@@ -95,6 +96,18 @@
                                 <span>¿Ha olvidado tu contraseña?</span>
                             </a>
                         </p>
+                    </div>
+                    <div class="card-body card-success" style="display: none;">
+                        <div class="app-brand justify-content-center">
+                            <a href="/admin/login" class="app-brand-link gap-2">
+                                <picture>
+                                    <source srcset="/img/logo.png" type="image/webp">
+                                    <img src="/img/logo.png" alt="<?= $_ENV["APP_NAME"]; ?>" class="app-brand-logo w-px-150">
+                                </picture>
+                            </a>
+                        </div>
+                        <h4 class="fs-1 ff-niconne mb-2 text-center"><?= $_ENV["APP_NAME"] ?></h4>
+                        <p class="fs-2 text-center text-success">Redirigiendo...</p>
                     </div>
                 </div>
                 <!-- /Register -->

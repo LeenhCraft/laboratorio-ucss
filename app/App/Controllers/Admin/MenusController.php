@@ -3,10 +3,10 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
-use App\Models\Admin\MenuAdminModel;
-use App\Models\MenuModel;
 use Slim\Csrf\Guard;
 use Slim\Psr7\Factory\ResponseFactory;
+
+use App\Models\TableModel;
 
 class MenusController extends Controller
 {
@@ -29,56 +29,28 @@ class MenusController extends Controller
             "url" => $request->getUri()->getPath(),
             "permisos" => $this->permisos,
             "js" => ["js/app/nw_menus.js"],
-            "tk" => [
-                "name" => $this->guard->getTokenNameKey(),
-                "value" => $this->guard->getTokenValueKey(),
-                "key" => $this->guard->generateToken()
-            ]
         ]);
     }
 
     public function list($request, $response)
     {
-        $model = new MenuAdminModel;
-        $arrData = $model->query("SELECT * FROM sis_menus")->orderBy("men_orden")->get();
+        $model = new TableModel;
+        $model->setTable("sis_menus");
+        $model->setId("idmenu");
+        $arrData = $model
+            ->orderBy("men_orden")
+            ->get();
 
-        $nmr = 0;
-        for ($i = 0; $i < count($arrData); $i++) {
-            $btnView = "";
-            $btnEdit = "";
-            $btnDelete = "";
-            $nmr++;
-            if ($this->permisos['perm_r'] == 1) {
-                $btnView = '<button class="btn btn-info btn-sm" onClick="fntView(' . $arrData[$i]['idmenu'] . ')" title="Ver Menus"><i class="bx bx-show-alt"></i></button>';
-            }
-            if ($this->permisos['perm_u'] == 1) {
-                $btnEdit = '<button class="btn btn-success btn-sm" onClick="fntEdit(' . $arrData[$i]['idmenu'] . ')" title="Editar Menus"><i class="bx bxs-edit-alt"></i></button>';
-            }
-            if ($this->permisos['perm_d'] == 1) {
-                $btnDelete = '<button class="btn btn-danger btn-sm" onClick="fntDel(' . $arrData[$i]['idmenu'] . ')" title="Eliminar Menus"><i class="bx bxs-trash-alt" ></i></button>';
-            }
-            if ($arrData[$i]['men_visible'] == 1) {
-                // $arrData[$i]['ver'] = '<span class="badge badge-success px-2 p-y1">Si</span>';
-                $arrData[$i]['ver'] = '
-                    <div class="border-0 d-flex justify-content-center">
-                        <div class="input-group-text border-0">
-                            <input class="form-check-input mt-0" type="checkbox" checked>
-                        </div>
-                    </div>
-                    ';
-            } else {
-                // $arrData[$i]['ver'] = '<span class="badge badge-danger px-2 py-1">No</span>';
-                $arrData[$i]['ver'] = '
-                    <div class="border-0 d-flex justify-content-center">
-                        <div class="input-group-text border-0">
-                            <input class="form-check-input mt-0" type="checkbox">
-                        </div>
-                    </div>';
-            }
+        foreach ($arrData as $key => $row) {
+            $arrData[$key]["edit"] = 0;
+            $arrData[$key]["delete"] = 0;
 
-            $arrData[$i]['options'] = '<div class="btn-group" role="group" aria-label="Basic example">' . $btnView . ' ' . $btnEdit . ' ' . $btnDelete . '</div>';
-            $arrData[$i]['nmr'] = $nmr;
-            $arrData[$i]['men_nombre'] = '<i class="me-1 bx ' . $arrData[$i]['men_icono'] . '"></i>' . ucwords($arrData[$i]['men_nombre']);
+            if ($this->permisos['perm_u'] == "1") {
+                $arrData[$key]["edit"] = 1;
+            }
+            if ($this->permisos['perm_d'] == "1") {
+                $arrData[$key]["delete"] = 1;
+            }
         }
         return $this->respondWithJson($response, $arrData);
     }
@@ -86,21 +58,18 @@ class MenusController extends Controller
     public function store($request, $response, $args)
     {
         $data = $this->sanitize($request->getParsedBody());
-
-        $validate = $this->guard->validateToken($data['csrf_name'], $data['csrf_value']);
-        if (!$validate) {
-            $msg = "Error de validación, por favor recargue la página";
-            return $this->respondWithError($response, $msg);
-        }
-
         $errors = $this->validar($data);
         if (!$errors) {
             $msg = "Verifique los datos ingresados";
             return $this->respondWithError($response, $msg);
         }
 
-        $model = new MenuAdminModel;
-        $existe = $model->where("men_nombre", $data['name'])->first();
+        $model = new TableModel;
+        $model->setTable("sis_menus");
+        $model->setId("idmenu");
+        $existe = $model
+            ->where("men_nombre", $data['name'])
+            ->first();
         if (!empty($existe)) {
             $msg = "El nombre del menú ya existe";
             return $this->respondWithError($response, $msg);
@@ -149,17 +118,16 @@ class MenusController extends Controller
 
         $errors = $this->validarSearch($data);
         if (!$errors) {
-            $msg = "Verifique los datos ingresados";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Verifique los datos ingresados");
         }
-
-        $model = new MenuAdminModel;
+        $model = new TableModel;
+        $model->setTable("sis_menus");
+        $model->setId("idmenu");
         $rq = $model->find($data['id']);
         if (!empty($rq)) {
             return $this->respondWithJson($response, ["status" => true, "data" => $rq]);
         }
-        $msg = "No se encontraron datos";
-        return $this->respondWithError($response, $msg);
+        return $this->respondWithError($response, "No se encontraron datos");
     }
 
     public function validarSearch($data)
@@ -173,22 +141,18 @@ class MenusController extends Controller
     public function update($request, $response)
     {
         $data = $this->sanitize($request->getParsedBody());
-        // return $this->respondWithJson($response, $data);
-
-        $validate = $this->guard->validateToken($data['csrf_name'], $data['csrf_value']);
-        if (!$validate) {
-            $msg = "Error de validación, por favor recargue la página";
-            return $this->respondWithError($response, $msg);
-        }
-
         $errors = $this->validarUpdate($data);
         if (!$errors) {
             $msg = "Verifique los datos ingresados";
             return $this->respondWithError($response, $msg);
         }
 
-        $model = new MenuAdminModel;
-        $existe = $model->where("men_nombre", "LIKE", $data['name'])->where("idmenu", "!=", $data['id'])->first();
+        $model = new TableModel;
+        $model->setTable("sis_menus");
+        $model->setId("idmenu");
+        $existe = $model
+            ->where("men_nombre", "LIKE", $data['name'])
+            ->where("idmenu", "!=", $data['id'])->first();
         if (!empty($existe)) {
             $msg = "Ya tiene un submenu con el mismo nombre";
             return $this->respondWithError($response, $msg);
@@ -237,19 +201,29 @@ class MenusController extends Controller
         if (empty($data["id"])) {
             return $this->respondWithError($response, "Error de validación, por favor recargue la página");
         }
-
-        $model = new MenuAdminModel;
+        $model = new TableModel;
+        $model->setTable("sis_menus");
+        $model->setId("idmenu");
         $rq = $model->find($data["id"]);
         if (!empty($rq)) {
+            $menusModel = new TableModel;
+            $menusModel->setTable("sis_menus");
+            $menusModel->setId("idmenu");
+            $arrData = $menusModel
+                ->select("sis_menus.men_nombre")
+                ->join("sis_submenus", "sis_menus.idmenu", "sis_submenus.idmenu")
+                ->join("sis_permisos ", "sis_submenus.idsubmenu", "sis_permisos.idsubmenu")
+                ->where("sis_menus.idmenu", $data["id"])
+                ->get();
+            if (!empty($arrData)) {
+                return $this->respondWithError($response, "No se puede eliminar el menú, tiene submenus o permisos asociados");
+            }
             $rq = $model->delete($data["id"]);
             if (!empty($rq)) {
-                $msg = "Datos eliminados correctamente";
-                return $this->respondWithSuccess($response, $msg);
+                return $this->respondWithSuccess($response, "Datos eliminados correctamente");
             }
-            $msg = "Error al eliminar los datos";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Error al eliminar los datos");
         }
-        $msg = "No se encontraron datos para eliminar.";
-        return $this->respondWithError($response, $msg);
+        return $this->respondWithError($response, "No se encontraron datos para eliminar.");
     }
 }

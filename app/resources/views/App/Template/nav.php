@@ -30,10 +30,17 @@ $expand = $active = '';
                 else :
                     $submenus = submenus($row['idmenu']);
                     $expand = (pertenece($ctrl, $row['idmenu'])) ? 'open' : '';
+                    // verificar si men_icono tiene fa- o bx-
+                    // Verificar si contiene 'fa-' o 'bx-'
+                    if (strpos($row['men_icono'], 'fa-') !== false) {
+                        $row['men_icono'] = "fa-solid " . $row['men_icono'];
+                    } elseif (strpos($row['men_icono'], 'bx-') !== false) {
+                        $row['men_icono'] = "bx " . $row['men_icono'];
+                    }
                 ?>
                     <li class="menu-item <?php echo $expand; ?>">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx <?php echo $row['men_icono']; ?>"></i>
+                            <i class="menu-icon tf-icons <?php echo $row['men_icono']; ?>"></i>
                             <div data-i18n="Layouts" class="text-capitalize"><?php echo $row['men_nombre']; ?></div>
                         </a>
 
@@ -43,11 +50,16 @@ $expand = $active = '';
                                 $active = ($key['sub_url'] == $ctrl) ? 'active' : '';
                                 $suburl = ($key['sub_url'] != '#') ? $key['sub_url'] : '#';
                                 $target = ($key['sub_externo'] == 1) ? 'target="_blank"' : '';
+                                if (strpos($key['sub_icono'], 'fa-') !== false) {
+                                    $key['sub_icono'] = "fa-solid " . $key['sub_icono'];
+                                } elseif (strpos($key['sub_icono'], 'bx-') !== false || strpos($key['sub_icono'], 'bxs-') !== false) {
+                                    $key['sub_icono'] = "bx " . $key['sub_icono'];
+                                }
                             ?>
                                 <li class="menu-item <?php echo $active; ?>">
                                     <a href="<?php echo $suburl; ?>" <?= $target ?> class="menu-link">
                                         <div data-i18n="<?php echo $key['sub_nombre']; ?>" class="d-flex justify-content-between align-items-center">
-                                            <i class="menu-icon tf-icons bx <?php echo $key['sub_icono']; ?>"></i>
+                                            <i class="menu-icon tf-icons <?php echo $key['sub_icono']; ?>"></i>
                                             <span>
                                                 <?php echo $key['sub_nombre']; ?>
                                             </span>

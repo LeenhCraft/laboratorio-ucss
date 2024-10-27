@@ -3,8 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
-use App\Models\Admin\SubmenuModel;
-use App\Models\MenuModel;
+use App\Models\TableModel;
 use Slim\Csrf\Guard;
 use Slim\Psr7\Factory\ResponseFactory;
 
@@ -30,56 +29,31 @@ class SubmenusController extends Controller
             "url" => $request->getUri()->getPath(),
             "permisos" => $this->permisos,
             "js" => ["js/app/nw_submenus.js"],
-            "tk" => [
-                "name" => $this->guard->getTokenNameKey(),
-                "value" => $this->guard->getTokenValueKey(),
-                "key" => $this->guard->generateToken()
-            ]
         ]);
     }
 
     public function list($request, $response)
     {
-        $model = new SubmenuModel;
-        $arrData = $model->query("SELECT * FROM sis_submenus a INNER JOIN sis_menus b ON b.idmenu=a.idmenu ORDER BY a.idsubmenu desc")->get();
-        $nmr = 0;
-        for ($i = 0; $i < count($arrData); $i++) {
-            $btnView = "";
-            $btnEdit = "";
-            $btnDelete = "";
-            $nmr++;
-            if ($this->permisos['perm_r'] == 1) {
-                $btnView = '<button class="btn btn-info btn-sm" onClick="fntView(' . $arrData[$i]['idsubmenu'] . ')" title="Ver Submenus"><i class="bx bx-show-alt"></i></button>';
+        $model = new TableModel;
+        $model->setTable("sis_submenus");
+        $model->setId("idsubmenu");
+        $arrData = $model
+            ->join("sis_menus", "sis_submenus.idmenu", "sis_menus.idmenu")
+            ->orderBy("sis_submenus.idsubmenu", "DESC")
+            ->get();
+        foreach ($arrData as $key => $value) {
+            $arrData[$key]["edit"] = 0;
+            $arrData[$key]["delete"] = 0;
+            if ($this->permisos['perm_u'] == "1") {
+                $arrData[$key]["edit"] = 1;
             }
-            if ($this->permisos['perm_u'] == 1) {
-                $btnEdit = '<button class="btn btn-success btn-sm" onClick="fntEdit(' . $arrData[$i]['idsubmenu'] . ')" title="Editar Submenus"><i class="bx bxs-edit-alt"></i></button>';
+            if ($this->permisos['perm_d'] == "1") {
+                $arrData[$key]["delete"] = 1;
             }
-            if ($this->permisos['perm_d'] == 1) {
-                $btnDelete = '<button class="btn btn-danger btn-sm" onClick="fntDel(' . $arrData[$i]['idsubmenu'] . ')" title="Eliminar Submenus"><i class="bx bxs-trash-alt" ></i></button>';
-            }
-            if ($arrData[$i]['sub_visible'] == 1) {
-                // $arrData[$i]['ver'] = '<span class="badge badge-success px-3 p-y2">Si</span>';
-                $arrData[$i]['ver'] = '
-                <div class="border-0 d-flex justify-content-center">
-                    <div class="input-group-text border-0">
-                        <input class="form-check-input mt-0" type="checkbox" checked>
-                    </div>
-                </div>';
-            } else {
-                // $arrData[$i]['ver'] = '<span class="badge badge-danger px-3 py-2">No</span>';
-                $arrData[$i]['ver'] = '
-                <div class="border-0 d-flex justify-content-center">
-                    <div class="input-group-text border-0">
-                        <input class="form-check-input mt-0" type="checkbox">
-                    </div>
-                </div>';
-            }
-            $arrData[$i]['options'] = '<div class="btn-group text-center" role="group" aria-label="Basic example">' . $btnView . ' ' . $btnEdit . ' ' . $btnDelete . '</div>';
-            $arrData[$i]['menu'] = '<i class="bx ' . $arrData[$i]['men_icono'] . '"></i> ' . ucwords($arrData[$i]['men_nombre']);
-            $arrData[$i]['url'] = strtolower($arrData[$i]['sub_url']);
-            $arrData[$i]['submenu'] = '<i class="bx ' . $arrData[$i]['sub_icono'] . '"></i> ' . ucfirst($arrData[$i]['sub_nombre']);
-            $arrData[$i]['nmr'] = $nmr;
-            $arrData[$i]['orden'] = $arrData[$i]['sub_orden'];
+            $arrData[$key]['menu'] = '<i class="bx ' . $arrData[$key]['men_icono'] . '"></i> ' . ucwords($arrData[$key]['men_nombre']);
+            $arrData[$key]['url'] = strtolower($arrData[$key]['sub_url']);
+            $arrData[$key]['submenu'] = '<i class="bx ' . $arrData[$key]['sub_icono'] . '"></i> ' . ucfirst($arrData[$key]['sub_nombre']);
+            $arrData[$key]['orden'] = $arrData[$key]['sub_orden'];
         }
         return $this->respondWithJson($response, $arrData);
     }
@@ -88,29 +62,20 @@ class SubmenusController extends Controller
     {
         $data = $this->sanitize($request->getParsedBody());
         // return $this->respondWithJson($response, $data);
-
-        $validate = $this->guard->validateToken($data['csrf_name'], $data['csrf_value']);
-        if (!$validate) {
-            $msg = "Error de validación, por favor recargue la página";
-            return $this->respondWithError($response, $msg);
-        }
-
         $errors = $this->validar($data);
         if (!$errors) {
-            $msg = "Verifique los datos ingresados";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Verifique los datos ingresados");
         }
-
-        $model = new SubmenuModel;
+        $model = new TableModel;
+        $model->setTable("sis_submenus");
+        $model->setId("idsubmenu");
         $existe = $model
             ->where("sub_nombre", "LIKE", $data['name'])
             ->where("idmenu", $data['idmenu'])
             ->first();
         if (!empty($existe)) {
-            $msg = "Ya tiene un submenu con el mismo nombre";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Ya tiene un submenu con el mismo nombre");
         }
-
         $rq = $model->create([
             "idmenu" => $data["idmenu"],
             "sub_nombre" => $data["name"],
@@ -122,11 +87,9 @@ class SubmenusController extends Controller
             "sub_visible" => $data['visible'] ?: 0,
         ]);
         if (!empty($rq)) {
-            $msg = "Datos guardados correctamente";
-            return $this->respondWithSuccess($response, $msg);
+            return $this->respondWithSuccess($response, "Datos guardados correctamente");
         }
-        $msg = "Error al guardar los datos";
-        return $this->respondWithJson($response, $existe);
+        return $this->respondWithJson($response, "Error al guardar los datos");
     }
 
     private function validar($data)
@@ -155,9 +118,12 @@ class SubmenusController extends Controller
             $msg = "Verifique los datos ingresados";
             return $this->respondWithError($response, $msg);
         }
-
-        $model = new SubmenuModel;
-        $rq = $model->where("idsubmenu", $data["id"])->first();
+        $model = new TableModel;
+        $model->setTable("sis_submenus");
+        $model->setId("idsubmenu");
+        $rq = $model
+            ->where("idsubmenu", $data["id"])
+            ->first();
         if (!empty($rq)) {
             return $this->respondWithJson($response, ["status" => true, "data" => $rq]);
         }
@@ -175,8 +141,16 @@ class SubmenusController extends Controller
 
     public function menus($request, $response)
     {
-        $menuModel = new MenuModel;
-        $arrData = $menuModel->query("SELECT idmenu as id, men_nombre as nombre FROM sis_menus ORDER BY men_orden ASC")->get();
+        $model = new TableModel;
+        $model->setTable("sis_menus");
+        $model->setId("idmenu");
+        $arrData = $model
+            ->select(
+                "idmenu as id",
+                "men_nombre as nombre"
+            )
+            ->orderBy("men_orden")
+            ->get();
         return $this->respondWithJson($response, ["status" => true, "data" => $arrData]);
     }
 
@@ -184,26 +158,20 @@ class SubmenusController extends Controller
     {
         $data = $this->sanitize($request->getParsedBody());
         // return $this->respondWithJson($response, $data);
-
-        $validate = $this->guard->validateToken($data['csrf_name'], $data['csrf_value']);
-        if (!$validate) {
-            $msg = "Error de validación, por favor recargue la página";
-            return $this->respondWithError($response, $msg);
-        }
-
         $errors = $this->validarUpdate($data);
         if (!$errors) {
-            $msg = "Verifique los datos ingresados";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Verifique los datos ingresados");
         }
-
-        $model = new SubmenuModel;
-        $existe = $model->where("sub_nombre", "LIKE", $data['name'])->where("idsubmenu", "!=", $data['id'])->first();
+        $model = new TableModel;
+        $model->setTable("sis_submenus");
+        $model->setId("idsubmenu");
+        $existe = $model
+            ->where("sub_nombre", "LIKE", $data['name'])
+            ->where("idsubmenu", "!=", $data['id'])
+            ->first();
         if (!empty($existe)) {
-            $msg = "Ya tiene un submenu con el mismo nombre";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Ya tiene un submenu con el mismo nombre");
         }
-
         $rq = $model->update($data['id'], [
             "idmenu" => $data["idmenu"],
             "sub_nombre" => $data["name"],
@@ -214,11 +182,9 @@ class SubmenusController extends Controller
             "sub_visible" => $data['visible'] ?: 0,
         ]);
         if (!empty($rq)) {
-            $msg = "Datos actualizados";
-            return $this->respondWithSuccess($response, $msg);
+            return $this->respondWithSuccess($response, "Datos actualizados");
         }
-        $msg = "Error al guardar los datos";
-        return $this->respondWithJson($response, $existe);
+        return $this->respondWithJson($response, "Error al guardar los datos");
     }
 
     private function validarUpdate($data)
@@ -247,19 +213,27 @@ class SubmenusController extends Controller
         if (empty($data["id"])) {
             return $this->respondWithError($response, "Error de validación, por favor recargue la página");
         }
-
-        $model = new SubmenuModel;
+        $model = new TableModel;
+        $model->setTable("sis_submenus");
+        $model->setId("idsubmenu");
         $rq = $model->find($data["id"]);
         if (!empty($rq)) {
+            $model = new TableModel;
+            $model->setTable("sis_submenus");
+            $model->setId("idsubmenu");
+            $arrData = $model
+                ->join("sis_permisos", "sis_permisos.idsubmenu", "sis_submenus.idsubmenu")
+                ->where("sis_submenus.idsubmenu", $data["id"])
+                ->first();
+            if (!empty($arrData)) {
+                return $this->respondWithError($response, "No se puede eliminar el submenu, ya que tiene permisos asignados");
+            }
             $rq = $model->delete($data["id"]);
             if (!empty($rq)) {
-                $msg = "Datos eliminados correctamente";
-                return $this->respondWithSuccess($response, $msg);
+                return $this->respondWithSuccess($response, "Datos eliminados correctamente");
             }
-            $msg = "Error al eliminar los datos";
-            return $this->respondWithError($response, $msg);
+            return $this->respondWithError($response, "Error al eliminar los datos");
         }
-        $msg = "No se encontraron datos para eliminar.";
-        return $this->respondWithError($response, $msg);
+        return $this->respondWithError($response, "No se encontraron datos para eliminar.");
     }
 }

@@ -6,10 +6,10 @@ $(document).ready(function () {
   //   console.log(data);
   // });
   tb = $("#sis_menus").dataTable({
-    aProcessing: true,
-    aServerSide: true,
+    // sProcessing: true,
+    // bServerSide: true,
     language: {
-      url: base_url + "js/app/plugins/dataTable.Spanish.json",
+      url: base_url + "js/plugins/dataTable.Spanish.json",
     },
     ajax: {
       url: base_url + "admin/menus",
@@ -17,15 +17,37 @@ $(document).ready(function () {
       dataSrc: "",
     },
     columns: [
-      { data: "nmr" },
-      { data: "men_nombre" },
-      { data: "ver", class: "text-center" },
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          return meta.row + 1;
+        },
+      },
+      {
+        data: null,
+        render: function (data, type, row, meta) {
+          const icono = data.men_icono;
+          const nombre = data.men_nombre;
+          // const prefijo = icono.startsWith("bx")
+          //   ? "bx"
+          //   : icono.startsWith("fa")
+          //   ? "fa"
+          //   : "";
+          // const claseIcono = prefijo ? `${prefijo} ${icono}` : icono;
+          return `<i class="${icono} me-2"></i>${nombre}`;
+        },
+      },
       { data: "men_orden", class: "text-center" },
-      { data: "options", class: "text-end" },
+      {
+        data: null,
+        className: "px-2",
+        render: function (data, type, row, meta) {
+          return generateDropdownMenu(data);
+        },
+      },
     ],
-    resonsieve: "true",
-    bDestroy: true,
-    iDisplayLength: 10,
+    displayLength: 10,
+    lengthMenu: [7, 10, 25, 50, 75, 100],
     // order: [[0, "desc"]],
   });
 
@@ -70,7 +92,7 @@ function fntView(id) {
 
 function fntEdit(id) {
   let ajaxUrl = base_url + "admin/menus/search";
-  $("#titleModal").html("Actualizar menus");
+  $("#modalmenusTitle").html("Actualizar Menu");
   $(".modal-header").removeClass("headerRegister");
   $(".modal-header").addClass("headerUpdate");
   $("#btnActionForm").removeClass("btn-primary");
@@ -145,7 +167,7 @@ function openModal() {
   $("#btnActionForm").removeClass("btn-info");
   $("#btnActionForm").addClass("btn-primary");
   $("#btnText").html("Guardar");
-  $("#titleModal").html("Nuevo menus");
+  $("#modalmenusTitle").html("Nuevo Menu");
   $("#id").val("");
   //document.querySelector("#menus_form").reset();
   $(".in_hidde").hide("slow");
@@ -199,3 +221,53 @@ function update(ths, e) {
   });
   return false;
 }
+
+function generateDropdownMenu(row) {
+  let options = [];
+  if (row.edit) {
+    options.push(
+      generateDropdownOption(
+        "Editar",
+        "bx bx-edit-alt",
+        `fntEdit(${row.idmenu})`
+      )
+    );
+  }
+  if (row.delete) {
+    options.push(
+      generateDropdownOption("Eliminar", "bx bx-trash", `fntDel(${row.idmenu})`)
+    );
+  }
+  if (!row.edit && !row.delete) {
+    options.push(
+      generateDropdownOption("Sin acciones", "bx bxs-info-circle", ``)
+    );
+  }
+  let optionsString = options.join("");
+  return `
+        <div class="d-flex flex-row">
+        <div class="dropdown">
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+            <i class="bx bx-dots-vertical-rounded"></i>
+            </button>
+            <div class="dropdown-menu">${optionsString}</div>
+        </div>
+        </div>
+    `;
+}
+
+function generateDropdownOption(text, iconClass, onClickFunction) {
+  if (onClickFunction) {
+    return `
+        <a class="dropdown-item" href="#" onclick="${onClickFunction}"><i class="${iconClass} me-2"></i>${text}</a>
+      `;
+  } else {
+    return `
+        <a class="dropdown-item disabled" href="#"><i class="${iconClass} me-2"></i>${text}</a>
+      `;
+  }
+}
+
+$("#btnRecargar").on("click", function () {
+  tb.api().ajax.reload();
+});

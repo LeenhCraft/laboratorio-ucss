@@ -1,28 +1,36 @@
 $(document).ready(function () {
+  // $(".card-success").hide();
   $("#frmlogin").submit(function (event) {
     event.preventDefault();
-    let ajaxUrl = base_url + "admin/login";
-    let form = $(this).serialize();
-    $.post(ajaxUrl, form, function (data) {
-      if (data.status) {
-        Swal.fire({
-          title: data.message,
-          icon: "success",
-          showConfirmButton: false,
-          timer: 1100,
-          timerProgressBar: true,
-        }).then((result) => {
-          if (result.dismiss === Swal.DismissReason.timer) {
-            window.location.reload();
-          }
+    divLoading.css("display", "flex");
+    const form = $(this).serialize();
+    const url = base_url + "admin/login";
+    $.post(url, form, function () {})
+      .done(function (data) {
+        const { status, message, data: responseData } = data;
+        const titleMessage = status ? `${message}<br>${responseData}` : message;
+        Toast.fire({
+          title: titleMessage,
+          icon: status ? "success" : "error",
+          position: "top",
         });
-      } else {
+        if (status) {
+          $(".card-success").show();
+          $(".card-content").hide();
+          setTimeout(() => window.location.reload(), 1100);
+        }
+      })
+      .fail(function (jqXHR, textStatus, errorThrown) {
         Swal.fire({
-          title: data.message,
+          title: "Error",
+          text: "An error occurred while processing your request.",
           icon: "error",
-          confirmButtonText: "ok",
+          confirmButtonText: "OK",
         });
-      }
-    });
+        console.log(jqXHR, textStatus, errorThrown);
+      })
+      .always(function () {
+        divLoading.css("display", "none");
+      });
   });
 });

@@ -430,7 +430,9 @@ function verArticulosIngreso(id, codigo) {
               className: "text-center px-0",
               render: function (data, type, row, meta) {
                 // si es caja agregar la cantidad y el factor, pero si no es caja solo la cantidad
-                return row.medida == "Caja" ? `${data} cajas x ${row.factor}` : `${data} Und.`;
+                return row.medida == "Caja"
+                  ? `${data} cajas x ${row.factor}`
+                  : `${data} Und.`;
               },
             },
             {

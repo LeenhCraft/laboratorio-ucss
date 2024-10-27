@@ -1,30 +1,25 @@
 <div class="modal fade" id="modalmenus" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm">
         <form id="menus_form" class="modal-content" onsubmit="return save(this,event)">
-            <input type="hidden" name="<?= $data['tk']['name'] ?>" value="<?= $data['tk']['key'][$data['tk']['name']]  ?>">
-            <input type="hidden" name="<?= $data['tk']['value'] ?>" value="<?= $data['tk']['key'][$data['tk']['value']] ?>">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalmenusTitle">Modal title</h5>
+                <h5 class="modal-title" id="modalmenusTitle">Menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <input type="hidden" id="id" name="id" value="">
-                <div class="mb-3 col-md-3 col-12">
-                    <label class="form-label txtIdmenu text-caputalize" for="basic-default-fullname">id</label>
-                    <input type="text" class="form-control" id="txtIdmenu" name="txtIdmenu" disabled>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-md-6">
+                <div class="row mb-2">
+                    <div class="col-12">
                         <label class="form-label" for="name">Nombre</label>
                         <input type="text" class="form-control" id="name" name="name">
                     </div>
-                    <div class="col-12 col-md-6">
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
                         <label class="form-label" for="icon">Icono</label>
                         <input type="text" class="form-control" id="icon" name="icon">
                     </div>
                 </div>
-                <div class="row my-3">
+                <div class="row mb-2">
                     <div class="col-md-4">
                         <div class="input-group border-0 d-flex align-items-center">
                             <div class="input-group-text border-0 ps-0">
@@ -33,33 +28,30 @@
                             <label class="p-0 m-0 form-label" for="url_si">Nivel 1</label>
                         </div>
                     </div>
-                    <div class="col-12 col-md-4 in_hidde" style="display: none;">
-                        <!-- <label for="txtMen_url">Men_url</label> -->
+                </div>
+                <div class="row mb-2">
+                    <div class="col-12 col-md-6 mb-2 mb-lg-0 in_hidde" style="display: none;">
                         <input type="text" class="form-control" id="url" name="url" placeholder="url del menu" disabled>
                     </div>
-                    <div class="col-md-4 in_hidde" style="display: none;">
-                        <!-- <label for="txtMen_controlador">Men_controlador</label> -->
+                    <div class="col-12 col-md-6 mb-2 mb-lg-0 in_hidde" style="display: none;">
                         <input type="text" class="form-control" id="controller" name="controller" placeholder="Controlador" disabled>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-12 col-md-6">
+                <div class="row mb-2">
+                    <div class="col-12 col-lg-6">
                         <label for="order">Orden</label>
                         <input type="number" class="form-control" id="order" name="order">
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-lg-6">
                         <label for="visible">Visible</label>
-                        <!-- <input type="text" class="form-control" id="visible" name="visible"> -->
                         <select class="form-control" id="visible" name="visible">
                             <option value="1">Si</option>
                             <option value="0">No</option>
                         </select>
                     </div>
                 </div>
-
                 <div class="row div_fecha">
-                    <div class="col-12 col-md-6">
+                    <div class="col-12">
                         <label for="fecha">F. Creación</label>
                         <input type="text" class="form-control" id="fecha" name="fecha" disabled>
                     </div>
@@ -67,7 +59,14 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="submit" class="btn btn-primary px-2 py-0">
+                    <span class="btn-icon">
+                        <i class='bx bx-check-double'></i>
+                    </span>
+                    <span class="btn-text">
+                        Guardar
+                    </span>
+                </button>
             </div>
         </form>
     </div>

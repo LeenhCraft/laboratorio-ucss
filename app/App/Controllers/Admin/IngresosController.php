@@ -20,8 +20,6 @@ class IngresosController extends Controller
     {
         parent::__construct();
         $this->permisos = getPermisos($this->className($this));
-        $this->responseFactory = new ResponseFactory();
-        $this->guard = new Guard($this->responseFactory);
     }
 
     public function index($request, $response)
@@ -42,11 +40,6 @@ class IngresosController extends Controller
                 'node_modules/autosize/dist/autosize.js',
                 "js/app/nw_ingresos.js"
             ],
-            "tk" => [
-                "name" => $this->guard->getTokenNameKey(),
-                "value" => $this->guard->getTokenValueKey(),
-                "key" => $this->guard->generateToken()
-            ]
         ]);
     }
 

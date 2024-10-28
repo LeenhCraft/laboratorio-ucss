@@ -30,6 +30,20 @@ $(document).ready(function () {
           $(row).addClass("table-info");
         }
       }
+      if (data.cancelado == 1) {
+        $(row).addClass("cancelled-row table-light");
+
+        // Agregar un div contenedor para mantener el layout original
+        $("td:first", row).prepend(`
+          <div class="cancelled-banner">
+            <div class="cancelled-content">
+              <i class="fa-solid fa-ban me-2"></i>
+              <span class="cancelled-text">Ingreso Cancelado</span>
+            </div>
+          </div>
+        `);
+      }
+
       // ------------------------
     },
     columns: [
@@ -38,11 +52,23 @@ $(document).ready(function () {
         width: "10%",
         className: "text-center px-1",
         render: function (data, type, row, meta) {
+          let labelCancelado = "";
+          if (row.cancelado == 1) {
+            labelCancelado = `<span class="badge bg-label-danger">Cancelado</span>`;
+          }
           // agregar el boton solo si no se ha pasado la fecha y la hora
-          if (row.fecha >= new Date().toLocaleDateString("en-CA")) {
-            return `<button class="btn px-1 text-danger" type="button" title="cancelar ingreso" data-id="${data.idingreso}">
-            <i class="fa-solid fa-ban me-1"></i>
-            <span class="small fw-semibold">Cancelar</span>
+          if (
+            row.fecha >= new Date().toLocaleDateString("en-CA") &&
+            row.cancelado == 0
+          ) {
+            return `<button 
+              class="btn px-1 text-danger" 
+              type="button" 
+              title="cancelar ingreso" 
+              onclick="cancelarIngreso('${data.idingreso}','${data.fecha}','${data.hora_fin}')"
+            >
+              <i class="fa-solid fa-ban me-1"></i>
+              <span class="small fw-semibold">Cancelar</span>
           </button>
           <button class="btn px-1 badge bg-label-success" type="button" title="Agregar Articulos" onclick="modalCargo('${data.idingreso}')">
             <i class="fa-solid fa-boxes-packing bx-sm"></i>
@@ -51,7 +77,7 @@ $(document).ready(function () {
           }
           if (row.fecha <= new Date().toLocaleDateString("en-CA")) {
             return `
-            <button class="btn px-1 badge bg-label-dark" type="button" title="Ver Articulos Prestados" onclick="modalCargo('${data.idingreso}')">
+            <button class="btn px-1 badge bg-label-dark" type="button" title="Ver Articulos Prestados" onclick="verArticulos('${data.idingreso}')">
             <i class="fa-solid fa-box bx-sm"></i>
           </button>
             `;
@@ -563,6 +589,48 @@ function modalCargo(id) {
     });
 }
 
+function verArticulos(id) {
+  divLoading.css("display", "flex");
+  $("#lista-articulos").DataTable({
+    aProcessing: true,
+    aServerSide: true,
+    language: {
+      url: base_url + "js/app/plugins/dataTable.Spanish.json",
+    },
+    ajax: {
+      url: base_url + "admin/laboratorio/lm",
+      method: "POST",
+      data: {
+        id,
+      },
+      dataSrc: "",
+    },
+    columns: [
+      {
+        data: "nombre",
+      },
+      {
+        className: "text-center",
+        data: "cantidad",
+      },
+      {
+        data: "estado",
+      },
+    ],
+    resonsieve: true,
+    bDestroy: true,
+    iDisplayLength: 10,
+    bFilter: false,
+    bSort: false,
+    bPaginate: false,
+    bInfo: false,
+    bAutoWidth: false,
+    scrollX: false,
+  });
+  $("#mdlListaArticulos").modal("show");
+  divLoading.css("display", "none");
+}
+
 function generateBtnBrush(data) {
   return `<button class="btn p-1 btn-sm border-0 text-danger" type="button" onclick="delArticuloIngreso('${data.iddetalle}')">
   <img src="/img/bin_empty.png" class="w-px-20 d-none">
@@ -608,25 +676,174 @@ $("#add-bien").on("click", function () {
 });
 
 function delArticuloIngreso(id) {
-  divLoading.css("display", "flex");
-  $.post(base_url + "admin/laboratorio/dm", { id }, function () {})
-    .done(function (response) {
-      if (response.status) {
-        tbl.ajax.reload();
-      }
-      Toast.fire({
-        icon: response.status ? "success" : "error",
-        title: response.message,
-      });
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-      Toast.fire({
-        icon: "error",
-        title: "error: " + errorThrown,
-      });
-      console.log(jqXHR, textStatus, errorThrown);
-    })
-    .always(function () {
-      divLoading.css("display", "none");
+  Swal.fire({
+    title: "Eliminar articulo",
+    text: "¿Quieres eliminar este articulo?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Si, eliminar!",
+    cancelButtonText: "No, cancelar!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.post(base_url + "admin/laboratorio/dm", { id }, function () {})
+        .done(function (response) {
+          if (response.status) {
+            tbl.ajax.reload();
+          }
+          Toast.fire({
+            icon: response.status ? "success" : "error",
+            title: response.message,
+          });
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          Toast.fire({
+            icon: "error",
+            title: "error: " + errorThrown,
+          });
+          console.log(jqXHR, textStatus, errorThrown);
+        })
+        .always(function () {
+          divLoading.css("display", "none");
+        });
+    }
+  });
+}
+
+// necesito crear una función que me permita cancelar un ingreso
+// solo se podran cancelar un ingreso si la fecha es mayor a la actual y las
+// horas son mayores a la actual, para cancelar el ingreso debo enviar al backend
+// el id del ingreso y el motivo de la cancelación
+// el backend debe devolver un mensaje de confirmación
+// si el ingreso se cancela, se debe recargar la tabla
+// si el ingreso no se cancela, se debe mostrar un mensaje de error
+/* function cancelarIngreso(id) {
+  Swal.fire({
+    title: "Cancelar Ingreso",
+    text: "¿Quieres cancelar este ingreso?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Si, cancelar!",
+    cancelButtonText: "No, cancelar!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.post(base_url + "admin/laboratorio/c", { id }, function () {})
+        .done(function (response) {
+          if (response.status) {
+            tb.api().ajax.reload();
+          }
+          Toast.fire({
+            icon: response.status ? "success" : "error",
+            title: response.message,
+          });
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          Toast.fire({
+            icon: "error",
+            title: "error: " + errorThrown,
+          });
+          console.log(jqXHR, textStatus, errorThrown);
+        })
+        .always(function () {
+          divLoading.css("display", "none");
+        });
+    }
+  });
+} */
+
+async function cancelarIngreso(id, fechaIngreso, hora) {
+  // Validar que el ingreso sea cancelable
+  const ahora = new Date();
+  const fechaHoraIngreso = new Date(`${fechaIngreso} ${hora}`);
+
+  if (fechaHoraIngreso <= ahora) {
+    Swal.fire({
+      icon: "error",
+      title: "No se puede cancelar",
+      text: "Solo se pueden cancelar ingresos futuros.",
     });
+    return;
+  }
+
+  // Solicitar motivo de cancelación
+  const { value: motivo, isConfirmed: motivoConfirmado } = await Swal.fire({
+    title: "Cancelar Ingreso",
+    input: "textarea",
+    inputLabel: "Motivo de cancelación",
+    inputPlaceholder: "Ingrese el motivo de la cancelación...",
+    inputAttributes: {
+      maxlength: "250",
+      required: "true",
+    },
+    showCancelButton: true,
+    confirmButtonText: "Sí, cancelar",
+    cancelButtonText: "No, volver",
+    inputValidator: (value) => {
+      if (!value?.trim()) {
+        return "Debe ingresar un motivo de cancelación";
+      }
+    },
+  });
+
+  if (!motivoConfirmado) return;
+
+  // Confirmación final
+  const { isConfirmed } = await Swal.fire({
+    title: "¿Está seguro?",
+    html: `
+          <p>Se cancelará el ingreso con el siguiente motivo:</p>
+          <p class="text-muted">${motivo}</p>
+      `,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, cancelar ingreso",
+    cancelButtonText: "No, volver",
+    confirmButtonColor: "#d33",
+  });
+
+  if (!isConfirmed) return;
+
+  // Mostrar loading
+  divLoading.css("display", "flex");
+
+  try {
+    const response = await $.ajax({
+      url: `${base_url}admin/laboratorio/c`,
+      method: "POST",
+      data: {
+        id,
+        motivo,
+        fecha_cancelacion: new Date().toISOString(),
+      },
+    });
+    console.log(response);
+
+    if (response.status) {
+      await Swal.fire({
+        icon: "success",
+        title: "Ingreso cancelado",
+        text: response.message,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+
+      // Recargar tabla
+      if (typeof tb !== "undefined" && tb.api) {
+        tb.api().ajax.reload(null, false); // false para mantener la página actual
+      }
+    } else {
+      throw new Error(response.message || "Error al cancelar el ingreso");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message || "Ocurrió un error al procesar la solicitud",
+      footer:
+        "<p class='m-0'>Si el problema persiste, contacte al administrador</p>",
+    });
+  } finally {
+    divLoading.css("display", "none");
+  }
 }

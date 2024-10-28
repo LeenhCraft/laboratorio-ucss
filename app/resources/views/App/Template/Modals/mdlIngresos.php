@@ -1,8 +1,6 @@
 <div class="modal fade" id="mdlIngresos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <form id="frmIngresos" class="modal-content">
-            <input type="hidden" name="<?= $data['tk']['name'] ?>" value="<?= $data['tk']['key'][$data['tk']['name']]  ?>">
-            <input type="hidden" name="<?= $data['tk']['value'] ?>" value="<?= $data['tk']['key'][$data['tk']['value']] ?>">
             <div class="modal-header">
                 <h5 class="modal-title title-ingresos text-primary fw-semibold">
                     <i class='bx bx-transfer me-1'></i>
@@ -52,11 +50,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <i class='bx bx-x-circle me-1'></i>
-                    <span>Cancelar</span>
+                    <span>Cerrar</span>
                 </button>
-                <button id="btnActionForm" type="submit" class="btn btn-outline-primary">
+                <button id="btnActionForm" type="submit" class="btn btn-primary">
                     <i class='bx bx-check-double me-1'></i>
                     <span>Guardar</span>
                 </button>
@@ -68,8 +66,6 @@
 <div class="modal fade" id="mdlAgregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form id="frmIngresosArticulos" class="modal-content">
-            <input type="hidden" name="<?= $data['tk']['name'] ?>" value="<?= $data['tk']['key'][$data['tk']['name']]  ?>">
-            <input type="hidden" name="<?= $data['tk']['value'] ?>" value="<?= $data['tk']['key'][$data['tk']['value']] ?>">
             <div class="modal-header">
                 <h5 class="modal-title text-primary fw-semibold" id="modal-title">
                     <i class='bx bx-transfer me-1'></i>
@@ -148,8 +144,6 @@
 <div class="modal fade" id="mdlVer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form id="frmIngresosArticulos" class="modal-content">
-            <input type="hidden" name="<?= $data['tk']['name'] ?>" value="<?= $data['tk']['key'][$data['tk']['name']]  ?>">
-            <input type="hidden" name="<?= $data['tk']['value'] ?>" value="<?= $data['tk']['key'][$data['tk']['value']] ?>">
             <div class="modal-header">
                 <h5 class="modal-title title-articulos-ingreso text-primary fw-semibold">
                     <span>Articulos del Ingreso N° </span>

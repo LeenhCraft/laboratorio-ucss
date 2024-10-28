@@ -26,8 +26,6 @@ class LaboratorioController extends Controller
 	{
 		parent::__construct();
 		$this->permisos = getPermisos($this->className($this));
-		$this->responseFactory = new ResponseFactory();
-		$this->guard = new Guard($this->responseFactory);
 	}
 
 
@@ -51,11 +49,6 @@ class LaboratorioController extends Controller
 				'node_modules/flatpickr/dist/l10n/es.js',
 				"js/app/nw_laboratorio.js"
 			],
-			'tk' => [
-				'name' => $this->guard->getTokenNameKey(),
-				'value' => $this->guard->getTokenValueKey(),
-				'key' => $this->guard->generateToken(),
-			]
 		]);
 	}
 
@@ -697,5 +690,73 @@ class LaboratorioController extends Controller
 			}
 		}
 		return $this->respondWithError($response, "Error al eliminar los datos.");
+	}
+
+	public function cancelarIngreso($request, $response)
+	{
+		// datos de entrada
+		$data = $this->sanitize($request->getParsedBody());
+		if (!isset($data["id"]) || empty($data["id"])) {
+			return $this->respondWithError($response, "Para poder cancelar el ingreso, debe seleccionar un registro");
+		}
+		/* "id": "3",
+		"motivo": "asdasd",
+		"fecha_cancelacion": "2024-10-28T13:26:16.919Z" */
+
+
+		// proceso
+
+		$model = new TableModel;
+		$model->setTable("lab_ingresos_laboratorios");
+		$model->setId("idingreso");
+		$existe = $model->find($data['id']);
+		// verificar si el ingreso existe
+		if (empty($existe)) {
+			return $this->respondWithError($response, "No se encontro el registro");
+		}
+		// verificar si el ingreso ya fue cancelado
+		if ($existe["cancelado"] == 1) {
+			return $this->respondWithError($response, "El ingreso ya fue cancelado");
+		}
+		// reponer el stock de los materiales prestados
+		$prestamo = new TableModel;
+		$prestamo->setTable("lab_prestamos");
+		$prestamo->setId("idprestamo");
+		$cabeceraPrestamo = $prestamo->where("idingreso", $data["id"])->first();
+		$detalle = new TableModel;
+		$detalle->setTable("lab_detalle_prestamos");
+		$detalle->setId("iddetalle");
+		$cuerpoPrestamo = $detalle->where("idprestamo", $cabeceraPrestamo["idprestamo"])->get();
+		foreach ($cuerpoPrestamo as $key => $value) {
+			$clsBalance = new BalanceClass;
+			$respuesta = $clsBalance->reponerStockPrestamo([
+				"idbalance" => $value["idbalance"],
+				"reponer_cantidad" => $value["cantidad"],
+			]);
+			// registrar el movimiento en el historial
+			$clsMovimientos = new MovimientosClass;
+			$clsMovimientos->store([
+				"idbalance" => $value["idbalance"],
+				"idinventariodetalle" => NULL,
+				"tipo_movimiento" => 1,
+				"tipo_detalle" => 3,
+				"idmedida" => 2,
+				"cantidad" => $value["cantidad"],
+				"factor" => 1,
+				"observaciones" => $data["motivo"] . " | Ingreso de inventario por cancelar un ingreso a laboratorio.",
+			]);
+		}
+		// poner el stock de materiales prestados a cero en el detalle del prestamo
+		foreach ($cuerpoPrestamo as $key => $value) {
+			$detalle->update($value["iddetalle"], ["cantidad" => 0]);
+		}
+		// cancelar el ingreso
+		$rq = $model->update($data['id'], ["cancelado" => 1]);
+
+		// salida
+		if (!empty($rq)) {
+			return $this->respondWithSuccess($response, "Ingreso cancelado correctamente");
+		}
+		return $this->respondWithError($response, "Error al cancelar el ingreso");
 	}
 }

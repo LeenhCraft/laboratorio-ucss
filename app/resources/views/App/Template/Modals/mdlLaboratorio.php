@@ -200,3 +200,39 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="mdlRetorno" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title title-view">
+					<i class="fa-solid fa-flask-vial me-1"></i>
+					<span>Lista de articulos - Retornar</span>
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="min-h-52">
+					<style>
+						#tbll_wrapper {
+							padding: 0;
+						}
+					</style>
+					<table id="articulos-retorno" class="table" width="100%">
+						<thead>
+							<tr>
+								<th>Equipo/Material</th>
+								<th>cantidad</th>
+								<th>Estado</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer"></div>
+		</div>
+	</div>
+</div>

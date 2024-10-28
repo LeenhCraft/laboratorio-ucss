@@ -6,8 +6,6 @@ use App\Controllers\Clases\BalanceClass;
 use App\Controllers\Clases\MovimientosClass;
 use App\Controllers\Controller;
 use App\Models\TableModel;
-use Slim\Csrf\Guard;
-use Slim\Psr7\Factory\ResponseFactory;
 
 /**
  * Class Laboratorio Controller
@@ -699,10 +697,6 @@ class LaboratorioController extends Controller
 		if (!isset($data["id"]) || empty($data["id"])) {
 			return $this->respondWithError($response, "Para poder cancelar el ingreso, debe seleccionar un registro");
 		}
-		/* "id": "3",
-		"motivo": "asdasd",
-		"fecha_cancelacion": "2024-10-28T13:26:16.919Z" */
-
 
 		// proceso
 
@@ -758,5 +752,59 @@ class LaboratorioController extends Controller
 			return $this->respondWithSuccess($response, "Ingreso cancelado correctamente");
 		}
 		return $this->respondWithError($response, "Error al cancelar el ingreso");
+	}
+
+	function articuloDevuelto($request, $response)
+	{
+		// datos de entrada
+		// viene el iddetalle
+		$data = $this->sanitize($request->getParsedBody());
+		if (!isset($data["id"]) || empty($data["id"])) {
+			return $this->respondWithError($response, "Para poder devolver el material, debe seleccionar un registro");
+		}
+
+		// proceso
+		$model = new TableModel;
+		$model->setTable("lab_detalle_prestamos");
+		$model->setId("iddetalle");
+		$existe = $model->find($data['id']);
+		// verificar que exista el detalle
+		if (empty($existe)) {
+			return $this->respondWithError($response, "No se encontro el registro");
+		}
+		// obtener la cantidad a retornar
+		$cantidad = $existe["cantidad"];
+		// obtener el idbalance para actualizar stock
+		$idbalance = $existe["idbalance"];
+
+		$balanceModel = new TableModel;
+		$balanceModel->setTable("lab_balance_inventarios");
+		$balanceModel->setId("idbalance");
+		// actualizar estock
+		$clsBalance = new BalanceClass;
+		$respuesta = $clsBalance->reponerStockPrestamo([
+			"idbalance" => $idbalance,
+			"reponer_cantidad" => $cantidad,
+		]);
+		if (!$respuesta["status"]) {
+			return $this->respondWithError($response, $respuesta["message"]);
+		}
+		// actualizar el estado como devuelto
+		$model->update($data['id'], ["estado" => "Devuelto"]);
+		// registrar el movimiento en el historial
+		$clsMovimientos = new MovimientosClass;
+		$clsMovimientos->store([
+			"idbalance" => $idbalance,
+			"idinventariodetalle" => NULL,
+			"tipo_movimiento" => 1,
+			"tipo_detalle" => 3,
+			"idmedida" => 2,
+			"cantidad" => $cantidad,
+			"factor" => 1,
+			"observaciones" => "Ingreso de inventario por devolución de material prestado.",
+		]);
+		// salida
+		// retornar mensaje de exito o error
+		return $this->respondWithSuccess($response, "Material devuelto correctamente");
 	}
 }

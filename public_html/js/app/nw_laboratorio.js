@@ -1,4 +1,4 @@
-let tb, tbl;
+let tb, tbl, tblr;
 $(document).ready(function () {
   tb = $("#tbl").dataTable({
     aProcessing: true,
@@ -31,9 +31,10 @@ $(document).ready(function () {
         }
       }
       if (data.cancelado == 1) {
-        $(row).addClass("cancelled-row table-light");
+        // $(row).addClass("cancelled-row table-light");
+        $(row).addClass("table-light");
 
-        // Agregar un div contenedor para mantener el layout original
+        /*  // Agregar un div contenedor para mantener el layout original
         $("td:first", row).prepend(`
           <div class="cancelled-banner">
             <div class="cancelled-content">
@@ -41,7 +42,7 @@ $(document).ready(function () {
               <span class="cancelled-text">Ingreso Cancelado</span>
             </div>
           </div>
-        `);
+        `); */
       }
 
       // ------------------------
@@ -50,18 +51,23 @@ $(document).ready(function () {
       {
         data: null,
         width: "10%",
-        className: "text-center px-1",
+        className: "px-1",
         render: function (data, type, row, meta) {
-          let labelCancelado = "";
+          let btnRet = (labelCancelado = "");
           if (row.cancelado == 1) {
-            labelCancelado = `<span class="badge bg-label-danger">Cancelado</span>`;
+            labelCancelado = `<span class="badge bg-label-danger text-danger text-capitalize fw-bold">Cancelado</span>`;
           }
+          btnRet = `
+          <button type="button" class="btn px-1 badge bg-label-warning" title="Devolver Articulos" onclick="modalRetornar('${data.idingreso}')">
+            <i class='bx bx-arrow-back bx-sm'></i>
+          </button>`;
           // agregar el boton solo si no se ha pasado la fecha y la hora
           if (
             row.fecha >= new Date().toLocaleDateString("en-CA") &&
             row.cancelado == 0
           ) {
-            return `<button 
+            return `
+            <button 
               class="btn px-1 text-danger" 
               type="button" 
               title="cancelar ingreso" 
@@ -73,16 +79,21 @@ $(document).ready(function () {
           <button class="btn px-1 badge bg-label-success" type="button" title="Agregar Articulos" onclick="modalCargo('${data.idingreso}')">
             <i class="fa-solid fa-boxes-packing bx-sm"></i>
           </button>
+          ${btnRet}
           `;
           }
-          if (row.fecha <= new Date().toLocaleDateString("en-CA")) {
+          if (
+            row.fecha <= new Date().toLocaleDateString("en-CA") &&
+            row.cancelado == 0
+          ) {
             return `
             <button class="btn px-1 badge bg-label-dark" type="button" title="Ver Articulos Prestados" onclick="verArticulos('${data.idingreso}')">
             <i class="fa-solid fa-box bx-sm"></i>
           </button>
+          ${btnRet}
             `;
           }
-          return "";
+          return `${labelCancelado}`;
         },
       },
       {
@@ -338,6 +349,15 @@ function generateDropdownMenu(row) {
         `fntDel(${row.idingreso})`
       )
     );
+  }
+
+  if (row.cancelado == 1) {
+    // agregar una opcion que diga no se puede editar
+    options.push(
+      generateDropdownOption("No se puede editar", "bx bxs-info-circle", ``)
+    );
+    // quitar el editar
+    options = options.filter((option) => !option.includes("Editar"));
   }
 
   if (!row.edit && !row.delete) {
@@ -846,4 +866,91 @@ async function cancelarIngreso(id, fechaIngreso, hora) {
   } finally {
     divLoading.css("display", "none");
   }
+}
+
+function modalRetornar(id) {
+  tblr = $("#articulos-retorno").DataTable({
+    aProcessing: true,
+    aServerSide: true,
+    language: {
+      url: base_url + "js/app/plugins/dataTable.Spanish.json",
+    },
+    ajax: {
+      url: base_url + "admin/laboratorio/lm",
+      method: "POST",
+      data: {
+        id,
+      },
+      dataSrc: "",
+    },
+    columns: [
+      {
+        data: "nombre",
+      },
+      {
+        className: "text-center",
+        data: "cantidad",
+      },
+      {
+        data: "estado",
+      },
+      {
+        // mostrar un boton para retornar el articulo
+        data: null,
+        className: "text-center",
+        render: function (data, type, row, meta) {
+          return `
+          <button class="btn btn-sm btn-success" type="button" onclick="retornarArticulo('${data.iddetalle}')">
+            <i class="fa-solid fa-arrow-rotate-left bx-xs"></i>
+          </button>`;
+        },
+      },
+    ],
+    resonsieve: true,
+    bDestroy: true,
+    iDisplayLength: 10,
+    bFilter: false,
+    bSort: false,
+    bPaginate: false,
+    bInfo: false,
+    bAutoWidth: false,
+    scrollX: false,
+    initComplete: function (settings, json) {
+      Toast.fire({
+        icon: "success",
+        title: "Datos cargados",
+      });
+      $("#mdlRetorno").modal("show");
+    },
+  });
+}
+
+function retornarArticulo(id) {
+  // enviar el id al backend para que se actualice el estado del articulo
+  // el backend debe devolver un mensaje de confirmación
+  // si el articulo se retorna, se debe recargar la tabla, en los datos retornados debe haber un valor que
+  // indique que ya ha sido retornado
+  // si el articulo no se retorna, se debe mostrar un mensaje de error
+  divLoading.css("display", "flex");
+  let ajaxUrl = base_url + "admin/laboratorio/r";
+  $.post(ajaxUrl, { id }, function () {})
+    .done(function (response) {
+      if (response.status) {
+        tblr.ajax.reload();
+      }
+      Toast.fire({
+        icon: response.status ? "success" : "error",
+        title: response.message,
+      });
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      Toast.fire({
+        icon: "error",
+        title: "error: " + errorThrown,
+      });
+      console.log(jqXHR, textStatus, errorThrown);
+    })
+    .always(function () {
+      divLoading.css("display", "none");
+    });
 }

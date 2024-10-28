@@ -168,5 +168,6 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->post('/sm', LaboratorioController::class . ':storeMaterialIngreso');
         $group->post('/dm', LaboratorioController::class . ':deleteMaterialIngreso');
         $group->post('/c', LaboratorioController::class . ':cancelarIngreso');
+        $group->post('/r', LaboratorioController::class . ':articuloDevuelto');
     })->add(PermissionMiddleware::class);
 })->add(new LoginAdminMiddleware());

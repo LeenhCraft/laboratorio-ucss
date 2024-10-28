@@ -2,9 +2,11 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\Clases\BalanceController;
+use App\Controllers\Clases\BalanceClass;
+use App\Controllers\Clases\MovimientosClass;
 use App\Controllers\Controller;
 use App\Models\TableModel;
+use Exception;
 use Slim\Csrf\Guard;
 use Slim\Psr7\Factory\ResponseFactory;
 
@@ -233,10 +235,11 @@ class IngresosController extends Controller
                 break;
         }
 
-        // buscar si existe el articulo en el inventario
+        // buscar si existe el articulo en el inventario, considerando que la unidad de medida sea la misma
         $existe = $model
             ->where("idinventario", $data["idingreso"])
             ->where($l, $id)
+            ->where("idmedida", $data["und_medida"])
             ->first();
 
         if (!empty($existe)) {
@@ -268,8 +271,20 @@ class IngresosController extends Controller
         $rq = $model->create($dataInsert);
         if (!empty($rq)) {
             // actualizar stock en lab_balance_inventarios
-            $clsBalance = new BalanceController;
-            $clsBalance->nuevoRegistro($dataInsert);
+            $clsBalance = new BalanceClass;
+            $respuesta = $clsBalance->nuevoRegistro($dataInsert);
+            // registrar el movimiento en el historial
+            $clsMovimientos = new MovimientosClass;
+            $clsMovimientos->store([
+                "idbalance" => $respuesta["data"]["idbalance"],
+                "idinventariodetalle" => $rq["idinventariodetalle"],
+                "tipo_movimiento" => 1,
+                "tipo_detalle" => 1,
+                "idmedida" => $rq["idmedida"],
+                "cantidad" => $rq["cantidad"],
+                "factor" => $rq["factor"],
+                "observaciones" => "Ingreso de inventario."
+            ]);
             return $this->respondWithSuccess($response, "Datos guardados correctamente");
         }
 
@@ -474,7 +489,7 @@ class IngresosController extends Controller
         }
         $data = $this->sanitize($request->getParsedBody());
         if (empty($data["id"])) {
-            return $this->respondWithError($response, "Error de validación, por favor recargue la página");
+            return $this->respondWithError($response, "El id del articulo es requerido");
         }
         $model = new TableModel;
         $model->setTable("lab_detalle_inventarios");
@@ -485,9 +500,21 @@ class IngresosController extends Controller
             $rq = $model->delete($data["id"]);
             if (!empty($rq)) {
                 // descuenta el stock en lab_balance_inventarios
-                $clsBalance = new BalanceController;
-                $clsBalance->quitarStock($articulo);
-                return $this->respondWithSuccess($response, "Datos eliminados correctamente");
+                $clsBalance = new BalanceClass;
+                $respuesta = $clsBalance->quitarStockIngresos($articulo);
+                // registrar el movimiento en el historial
+                $clsMovimientos = new MovimientosClass;
+                $clsMovimientos->store([
+                    "idbalance" => $respuesta["idbalance"],
+                    "idinventariodetalle" => $articulo["idinventariodetalle"],
+                    "tipo_movimiento" => 2,
+                    "tipo_detalle" => 1,
+                    "idmedida" => $articulo["idmedida"],
+                    "cantidad" => $articulo["cantidad"],
+                    "factor" => $articulo["factor"],
+                    "observaciones" => "Salida de inventario por eliminacion de articulo."
+                ]);
+                return $this->respondWithSuccess($response, "Datos eliminados correctamente. " . $respuesta["message"]);
             }
         }
         $msg = "Error al eliminar los datos";
@@ -519,8 +546,28 @@ class IngresosController extends Controller
         $model->setTable("lab_inventarios");
         $model->setId("idinventario");
         $all = $model->orderBy("fecha_ingreso", "DESC")
-            ->orderBy("idinventario", "DESC")->get();
-        // return $all;
-        return intval(explode("-", $all[0]["codigo"])[1]) + 1;
+            ->orderBy("idinventario", "DESC")
+            ->get();
+
+        // Si no hay registros, comenzar desde 1
+        if (empty($all)) {
+            return 1;
+        }
+
+        // Si hay registros, obtener el último código y aumentar en 1
+        try {
+            $ultimoCodigo = $all[0]["codigo"] ?? '';
+            $partes = explode("-", $ultimoCodigo);
+
+            if (count($partes) < 2 || !is_numeric($partes[1])) {
+                // Si el código no tiene el formato esperado, comenzar desde 1
+                return 1;
+            }
+
+            return intval($partes[1]) + 1;
+        } catch (Exception $e) {
+            // Si ocurre cualquier error, comenzar desde 1
+            return 1;
+        }
     }
 }

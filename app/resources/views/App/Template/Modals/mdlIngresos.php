@@ -173,6 +173,11 @@
                         </tbody>
                     </table>
                 </div>
+                <div>
+                    <p class="text-primary fw-semibold">
+                        <span class="fw-bold text-danger">*</span> Solo se podra eliminar los articulos que no han sido utilizados o no hallan sido asignados a un prestamo.
+                    </p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

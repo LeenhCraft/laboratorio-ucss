@@ -470,6 +470,7 @@ function formatTime(time) {
 
 function modalCargo(id) {
   $("#idingreso").val(id);
+  $("#cantidad").val(1);
   //
   divLoading.css("display", "flex");
   let ajaxUrl = base_url + "admin/laboratorio/search";
@@ -491,7 +492,7 @@ function modalCargo(id) {
           );
           materiales.forEach((element) => {
             $("#idbien").append(
-              `<option value="${element.idinventariodetalle}">${element.nombre}</option>`
+              `<option value="${element.idbalance}">${element.nombre}</option>`
             );
           });
           $("#idbien").select2({
@@ -555,9 +556,7 @@ function modalCargo(id) {
         icon: "error",
         title: "error: " + errorThrown,
       });
-      console.log(jqXHR);
-      console.log(textStatus);
-      console.log(errorThrown);
+      console.log(jqXHR, textStatus, errorThrown);
     })
     .always(function () {
       divLoading.css("display", "none");
@@ -565,7 +564,7 @@ function modalCargo(id) {
 }
 
 function generateBtnBrush(data) {
-  return `<button class="btn p-1 btn-sm border-0 text-danger" type="button" onclick="delArticuloIngreso('${data.id}')">
+  return `<button class="btn p-1 btn-sm border-0 text-danger" type="button" onclick="delArticuloIngreso('${data.iddetalle}')">
   <img src="/img/bin_empty.png" class="w-px-20 d-none">
   <i class='bx bx-trash-alt bx-sm' ></i>
   </button>`;
@@ -607,3 +606,27 @@ $("#add-bien").on("click", function () {
       divLoading.css("display", "none");
     });
 });
+
+function delArticuloIngreso(id) {
+  divLoading.css("display", "flex");
+  $.post(base_url + "admin/laboratorio/dm", { id }, function () {})
+    .done(function (response) {
+      if (response.status) {
+        tbl.ajax.reload();
+      }
+      Toast.fire({
+        icon: response.status ? "success" : "error",
+        title: response.message,
+      });
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      Toast.fire({
+        icon: "error",
+        title: "error: " + errorThrown,
+      });
+      console.log(jqXHR, textStatus, errorThrown);
+    })
+    .always(function () {
+      divLoading.css("display", "none");
+    });
+}

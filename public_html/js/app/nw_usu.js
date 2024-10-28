@@ -1,6 +1,6 @@
 let tb;
 $(document).ready(function () {
-  $(".js-example-basic-single").select2({
+  $("#idpersona").select2({
     dropdownParent: $("#modalFormUsuario"),
   });
   tb = $("#tb").dataTable({

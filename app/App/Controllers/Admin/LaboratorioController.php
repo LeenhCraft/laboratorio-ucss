@@ -2,9 +2,10 @@
 
 namespace App\Controllers\Admin;
 
+use App\Controllers\Clases\BalanceClass;
+use App\Controllers\Clases\MovimientosClass;
 use App\Controllers\Controller;
 use App\Models\TableModel;
-use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 use Slim\Csrf\Guard;
 use Slim\Psr7\Factory\ResponseFactory;
 
@@ -94,7 +95,7 @@ class LaboratorioController extends Controller
 		return $this->respondWithJson($response, $model->orderBy("nombre")->get());
 	}
 
-	public function listMateriales($request, $response)
+	/* public function listMateriales($request, $response)
 	{
 		$bienes = [];
 		$producto = new TableModel;
@@ -144,6 +145,55 @@ class LaboratorioController extends Controller
 
 		// dep($model->previewSql(), 1);
 		return $this->respondWithJson($response, $bienes);
+	} */
+
+	public function listMateriales($request, $response)
+	{
+		$bienes = [];
+		$producto = new TableModel;
+		$producto->setTable("lab_balance_inventarios");
+		$producto->setId("idbalance");
+		$bienes = array_merge(
+			$bienes,
+			$producto
+				->select(
+					"lab_productos.idproducto as id",
+					"lab_productos.nombre",
+					"lab_balance_inventarios.idbalance"
+				)
+				->join("lab_productos", "lab_balance_inventarios.idproducto", "lab_productos.idproducto")
+				->get()
+		);
+		$insumos = new TableModel;
+		$insumos->setTable("lab_balance_inventarios");
+		$insumos->setId("idbalance");
+		$bienes = array_merge(
+			$bienes,
+			$insumos
+				->select(
+					"lab_insumos.idinsumo as id",
+					"lab_insumos.nombre",
+					"lab_balance_inventarios.idbalance"
+				)
+				->join("lab_insumos", "lab_balance_inventarios.idinsumo", "lab_insumos.idinsumo")
+				->get()
+		);
+		$materiales = new TableModel;
+		$materiales->setTable("lab_balance_inventarios");
+		$materiales->setId("idbalance");
+		$bienes = array_merge(
+			$bienes,
+			$materiales
+				->select(
+					"lab_materiales.idmaterial as id",
+					"lab_materiales.nombre",
+					"lab_balance_inventarios.idbalance"
+				)
+				->join("lab_materiales", "lab_balance_inventarios.idmaterial", "lab_materiales.idmaterial")
+				->get()
+		);
+		// dep($model->previewSql(), 1);
+		return $this->respondWithJson($response, $bienes);
 	}
 
 	public function listMaterialesIngreso($request, $response)
@@ -168,11 +218,11 @@ class LaboratorioController extends Controller
 				"lab_detalle_prestamos.idprestamo",
 				"lab_detalle_prestamos.cantidad",
 				"lab_detalle_prestamos.estado",
-				"lab_detalle_inventarios.idproducto",
-				"lab_detalle_inventarios.idinsumo",
-				"lab_detalle_inventarios.idmaterial",
+				"lab_balance_inventarios.idproducto",
+				"lab_balance_inventarios.idinsumo",
+				"lab_balance_inventarios.idmaterial",
 			)
-			->join("lab_detalle_inventarios", "lab_detalle_prestamos.idinventariodetalle", "lab_detalle_inventarios.idinventariodetalle")
+			->join("lab_balance_inventarios", "lab_detalle_prestamos.idbalance", "lab_balance_inventarios.idbalance")
 			->where("idprestamo", $prestamo["idprestamo"])
 			->get();
 		if (empty($detalles)) {
@@ -346,20 +396,33 @@ class LaboratorioController extends Controller
 		// buscando si existe el detalle
 		$existeDetalle = $modelDetalle
 			->where("idprestamo", $idprestamo)
-			->where("idinventariodetalle", $data["id"])
+			->where("idbalance", $data["id"])
 			->first();
 		$rq = "";
 		// no existe el detalle
 		if (empty($existeDetalle)) {
+			// verificar stock en lab_balance_inventarios
+			$existeDetalle["idbalance"] = $data["id"];
+			$existeDetalle["cantidad_solicitada"] = $data["cantidad"];
+			$hayStock = $this->verificarStock($existeDetalle);
+			if (!$hayStock["status"]) {
+				return $this->respondWithError($response, $hayStock["message"]);
+			}
 			// insertar el detalle
 			$rq = $modelDetalle->create([
 				"idprestamo" => $idprestamo,
-				"idinventariodetalle" => $data["id"],
+				"idbalance" => $data["id"],
 				"cantidad" => $data["cantidad"] ?? "1",
 			]);
-			// actualizar el estado del inventario
 		} else {
 			// existe el detalle
+
+			// verificar stock en lab_balance_inventarios
+			$existeDetalle["cantidad_solicitada"] = $data["cantidad"];
+			$hayStock = $this->verificarStock($existeDetalle);
+			if (!$hayStock["status"]) {
+				return $this->respondWithError($response, $hayStock["message"]);
+			}
 			// actualizar el detalle
 
 			// return $this->respondWithError($response, "Ya existe un detalle con este material");
@@ -369,10 +432,26 @@ class LaboratorioController extends Controller
 					"cantidad" => $data["cantidad"] ?? "1",
 				]
 			);
-			// actualizar el estado del inventario
 		}
+		// actualizar el estado del inventario
+		$clsBalance = new BalanceClass;
+		$hayStock["idbalance"] = $data["id"];
+		$hayStock["descontar_cantidad"] = $data["cantidad"];
+		$respuesta = $clsBalance->quitarStockPrestamo($hayStock);
+		// registrar el movimiento en el historial
+		$clsMovimientos = new MovimientosClass;
+		$clsMovimientos->store([
+			"idbalance" => $data["id"],
+			"idinventariodetalle" => null,
+			"tipo_movimiento" => 0,
+			"tipo_detalle" => 2,
+			"idmedida" => 2,
+			"cantidad" => $data["cantidad"],
+			"factor" => 1,
+			"observaciones" => "Salida de inventario por prestamo",
+		]);
 		if (!empty($rq)) {
-			return $this->respondWithSuccess($response, "Datos guardados correctamente");
+			return $this->respondWithSuccess($response, "Datos guardados correctamente. " . $respuesta["message"]);
 		}
 		return $this->respondWithError($response, "Error al guardar los datos.");
 	}
@@ -422,6 +501,13 @@ class LaboratorioController extends Controller
 		}
 		return true;
 	}
+
+	private function verificarStock($data)
+	{
+		$clsBalance = new BalanceClass;
+		return $respuesta = $clsBalance->verificarStock($data);
+	}
+
 
 	/**
 	 * Metodo para buscar un registro por el id
@@ -571,5 +657,45 @@ class LaboratorioController extends Controller
 
 		$msg = "Error al eliminar los datos";
 		return $this->respondWithError($response, $msg);
+	}
+
+	public function deleteMaterialIngreso($request, $response)
+	{
+		$data = $this->sanitize($request->getParsedBody());
+		// return $this->respondWithJson($response, $data);
+		if (empty($data["id"])) {
+			return $this->respondWithError($response, "Error de validación, por favor recargue la página");
+		}
+		$model = new TableModel;
+		$model->setTable("lab_detalle_prestamos");
+		$model->setId("iddetalle");
+		$idbalance = [
+			"idbalance" => "0",
+			"reponer_cantidad" => "0",
+		];
+		$rq = $model->find($data['id']);
+		if (!empty($rq)) {
+			$idbalance["idbalance"] = $rq["idbalance"];
+			$idbalance["reponer_cantidad"] = $rq["cantidad"];
+			$rq = $model->delete($data["id"]);
+			if (!empty($rq)) {
+				$clsBalance = new BalanceClass;
+				$respuesta = $clsBalance->reponerStockPrestamo($idbalance);
+				// registrar el movimiento en el historial
+				$clsMovimientos = new MovimientosClass;
+				$clsMovimientos->store([
+					"idbalance" => $idbalance["idbalance"],
+					"idinventariodetalle" => NULL,
+					"tipo_movimiento" => 1,
+					"tipo_detalle" => 2,
+					"idmedida" => 2,
+					"cantidad" => $idbalance["reponer_cantidad"],
+					"factor" => 1,
+					"observaciones" => "Ingreso de inventario por eliminar un material que no se presto",
+				]);
+				return $this->respondWithSuccess($response, "Datos eliminados correctamente." . $respuesta["message"]);
+			}
+		}
+		return $this->respondWithError($response, "Error al eliminar los datos.");
 	}
 }

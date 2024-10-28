@@ -3,7 +3,6 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
-use App\Models\Admin\UserModel;
 use App\Models\UsuarioModel;
 use Slim\Csrf\Guard;
 use Slim\Psr7\Factory\ResponseFactory;
@@ -28,7 +27,14 @@ class UsuariosController extends Controller
             'titulo_web' => 'Usuarios',
             "url" => $request->getUri()->getPath(),
             "permisos" => $this->permisos,
-            "js" => ["js/app/nw_usu.js"],
+            "css" => [
+                "vendor/select2/select2/dist/css/select2.min.css",
+                "css/select2-custom.css",
+            ],
+            "js" => [
+                "vendor/select2/select2/dist/js/select2.min.js",
+                "js/app/nw_usu.js"
+            ],
             "tk" => [
                 "name" => $this->guard->getTokenNameKey(),
                 "value" => $this->guard->getTokenValueKey(),

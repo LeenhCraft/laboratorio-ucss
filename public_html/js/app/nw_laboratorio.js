@@ -73,12 +73,12 @@ $(document).ready(function () {
               title="cancelar ingreso" 
               onclick="cancelarIngreso('${data.idingreso}','${data.fecha}','${data.hora_fin}')"
             >
-              <i class="fa-solid fa-ban me-1"></i>
-              <span class="small fw-semibold">Cancelar</span>
-          </button>
-          <button class="btn px-1 badge bg-label-success" type="button" title="Agregar Articulos" onclick="modalCargo('${data.idingreso}')">
-            <i class="fa-solid fa-boxes-packing bx-sm"></i>
-          </button>
+                <i class="fa-solid fa-ban me-1"></i>
+                <span class="small fw-semibold">Cancelar</span>
+            </button>
+            <button class="btn px-1 badge bg-label-success" type="button" title="Agregar Articulos" onclick="modalCargo('${data.idingreso}')">
+              <i class="fa-solid fa-boxes-packing bx-sm"></i>
+            </button>
           ${btnRet}
           `;
           }
@@ -88,8 +88,8 @@ $(document).ready(function () {
           ) {
             return `
             <button class="btn px-1 badge bg-label-dark" type="button" title="Ver Articulos Prestados" onclick="verArticulos('${data.idingreso}')">
-            <i class="fa-solid fa-box bx-sm"></i>
-          </button>
+              <i class="fa-solid fa-box bx-sm"></i>
+            </button>
           ${btnRet}
             `;
           }

@@ -265,7 +265,7 @@ class LaboratorioController extends Controller
 		}
 		$errors = $this->validar($data);
 		if (!$errors) {
-			$msg = "Verifique los datos ingresados";
+			$msg = "Los campos con (*) son requeridos.";
 			return $this->respondWithError($response, $msg);
 		}
 		$model = new TableModel;
@@ -289,6 +289,7 @@ class LaboratorioController extends Controller
 					->where("hora_fin", ">", $data['hora_inicio'])
 					->where("hora_fin", "<", $data['hora_fin']);
 			})
+			->where("cancelado", "0")
 			->first();
 
 		if (!empty($existe)) {
@@ -772,6 +773,12 @@ class LaboratorioController extends Controller
 		if (empty($existe)) {
 			return $this->respondWithError($response, "No se encontro el registro");
 		}
+
+		if ($existe["estado"] === "Devuelto") {
+			return $this->respondWithError($response, "El material ya fue devuelto");
+		}
+		dep($existe, 1);
+
 		// obtener la cantidad a retornar
 		$cantidad = $existe["cantidad"];
 		// obtener el idbalance para actualizar stock

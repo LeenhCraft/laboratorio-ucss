@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
+use App\Models\TableModel;
 use App\Models\UsuarioModel;
 use Slim\Csrf\Guard;
 use Slim\Psr7\Factory\ResponseFactory;
@@ -45,13 +46,24 @@ class UsuariosController extends Controller
 
     public function list($request, $response)
     {
-        $model = new UsuarioModel;
-        $arrData = $model->lstUser();
+        if ($this->permisos['perm_r'] !== "1") {
+            return $this->respondWithError($response, "No tiene permisos para realizar esta acción");
+        }
+        $model = new TableModel;
+        $model->setTable("sis_usuarios");
+        $model->setId("idusuario");
+        $arrData = $model
+            ->select(
+                "sis_usuarios.idusuario as id",
+                "sis_usuarios.usu_usuario as user",
+                "sis_rol.rol_nombre as rol",
+                "sis_usuarios.usu_activo as activo",
+                "sis_usuarios.usu_estado as estado",
+            )
+            ->leftJoin("sis_rol", "sis_usuarios.idrol", "sis_rol.idrol")
+            ->get();
 
-        $num = 1;
         for ($i = 0; $i < count($arrData); $i++) {
-            $num++;
-            $arrData[$i]['num'] = $num;
             $arrData[$i]['delete'] = 0;
             $arrData[$i]['edit'] = 0;
 

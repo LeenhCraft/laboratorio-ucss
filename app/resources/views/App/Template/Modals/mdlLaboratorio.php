@@ -19,7 +19,7 @@
 					</div>
 					<hr class="my-3">
 					<div class="col-12 col-lg-8">
-						<label class="fw-bold form-label text-capitalize" for="titulo_practica">Titulo de la practica</label>
+						<label class="fw-bold form-label text-capitalize" for="titulo_practica">Titulo de la practica <span class="text-danger fw-bold">*</span></label>
 						<input id="titulo_practica" name="titulo_practica" type="text" class="form-control">
 					</div>
 					<div class="col-12 col-lg-4">
@@ -27,11 +27,11 @@
 						<input id="nro_practicas" name="nro_practicas" type="number" class="form-control" value="0">
 					</div>
 					<div class="col-12">
-						<label class="fw-bold form-label text-capitalize" for="carrera">Carrera</label>
+						<label class="fw-bold form-label text-capitalize" for="carrera">Carrera <span class="text-danger fw-bold">*</span></label>
 						<input id="carrera" name="carrera" type="text" class="form-control">
 					</div>
 					<div class="col-12">
-						<label class="fw-bold form-label text-capitalize" for="iddocente">Docente</label>
+						<label class="fw-bold form-label text-capitalize" for="iddocente">Docente <span class="text-danger fw-bold">*</span></label>
 						<div class="row">
 							<div class="col-9 col-lg-9">
 								<select name="iddocente" id="iddocente" class="form-select"></select>
@@ -47,11 +47,11 @@
 					<!--  -->
 					<!--  -->
 					<div class="col-12">
-						<label class="fw-bold form-label text-capitalize" for="asignatura">Asignatura</label>
+						<label class="fw-bold form-label text-capitalize" for="asignatura">Asignatura <span class="text-danger fw-bold">*</span></label>
 						<input id="asignatura" name="asignatura" type="text" class="form-control">
 					</div>
 					<div class="col-12 col-lg-4">
-						<label class="fw-bold form-label text-capitalize" for="turno">Turno</label>
+						<label class="fw-bold form-label text-capitalize" for="turno">Turno <span class="text-danger fw-bold">*</span></label>
 						<input id="turno" name="turno" type="text" class="form-control">
 					</div>
 					<div class="col-12 col-lg-4">
@@ -59,15 +59,15 @@
 						<input id="ciclo" name="ciclo" type="number" class="form-control" value="0">
 					</div>
 					<div class="col-12 col-lg-4">
-						<label class="fw-bold form-label text-capitalize" for="fecha">Fecha</label>
+						<label class="fw-bold form-label text-capitalize" for="fecha">Fecha <span class="text-danger fw-bold">*</span></label>
 						<input id="fecha" name="fecha" type="date" class="form-control">
 					</div>
 					<div class="col-12 col-lg-4">
-						<label class="fw-bold form-label text-capitalize" for="hora_inicio">Hora inicio</label>
+						<label class="fw-bold form-label text-capitalize" for="hora_inicio">Hora inicio <span class="text-danger fw-bold">*</span></label>
 						<input id="hora_inicio" name="hora_inicio" type="time" class="form-control">
 					</div>
 					<div class="col-12 col-lg-4">
-						<label class="fw-bold form-label text-capitalize" for="hora_fin">Hora fin</label>
+						<label class="fw-bold form-label text-capitalize" for="hora_fin">Hora fin <span class="text-danger fw-bold">*</span></label>
 						<input id="hora_fin" name="hora_fin" type="time" class="form-control">
 					</div>
 					<div class="col-12 col-lg-4">
@@ -120,7 +120,7 @@
 				<hr class="my-3">
 				<div class="row mb-3">
 					<div class="col-12 col-lg-6">
-						<label class="fw-bold form-label text-capitalize" for="titulo_practica">Material <span class="text-lowercase">y/o</span> Equipo</label>
+						<label class="fw-bold form-label text-capitalize" for="idbien">Material <span class="text-lowercase">y/o</span> Equipo</label>
 						<select name="idbien" id="idbien" class="form-select">
 							<option value="0">Seleccione una opción</option>
 						</select>
@@ -167,7 +167,7 @@
 </div>
 
 
-<div class="modal fade" id="mdlListaArticulos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="mdlListaArticulos" tabindex="-1" style="display: none;" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -232,7 +232,12 @@
 					</table>
 				</div>
 			</div>
-			<div class="modal-footer"></div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="fa-regular fa-circle-xmark me-2"></i>
+					<span>Cerrar</span>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>

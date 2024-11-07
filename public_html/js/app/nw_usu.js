@@ -15,17 +15,27 @@ $(document).ready(function () {
       dataSrc: "",
     },
     columns: [
-      { data: "num" },
-      { data: "usu" },
+      {
+        data: null,
+        width: "5%",
+        render: function (data, type, row, meta) {
+          return meta.row + 1;
+        },
+      },
+      { data: "user" },
       { data: "rol" },
       {
-        data: "estado",
+        data: null,
+        width: "10%",
         render: function (data, type, row) {
-          if (data == 1) {
-            return `<i class='bx bxs-check-circle text-success'></i>`;
-          } else {
-            return `<i class='bx bxs-x-circle text-danger'></i>`;
-          }
+          const activo = data.activo
+            ? `<i class='bx bxs-check-circle text-success me-2'></i>Activo`
+            : `<i class='bx bxs-x-circle text-danger me-2'></i>Inactivo`;
+
+          const estado = data.estado
+            ? `<i class='bx bxs-check-circle text-success me-2'></i>Habilitado`
+            : `<i class='bx bxs-x-circle text-danger me-2'></i>Bloqueado`;
+          return `${activo} <br> ${estado}`;
         },
       },
       {

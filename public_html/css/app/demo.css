@@ -231,6 +231,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 
   .dataTables_scrollBody {
     min-height: 200px;
+    /* overflow: hidden !important; */
   }
 }
 

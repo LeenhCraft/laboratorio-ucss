@@ -311,6 +311,7 @@ class LaboratorioController extends Controller
 			'hora_fin' => "00:00",
 			'nro_estudiantes' => 0,
 			'observaciones' => "",
+			'completado' => 0
 		];
 		$dataInsert = [];
 		foreach ($defaultValues as $key => $defaultValue) {
@@ -777,7 +778,27 @@ class LaboratorioController extends Controller
 		if ($existe["estado"] === "Devuelto") {
 			return $this->respondWithError($response, "El material ya fue devuelto");
 		}
-		dep($existe, 1);
+
+		// verificar que el material no tenga alguna ocurrencia
+		$modelOcurrencia = new TableModel;
+		$modelOcurrencia->setTable("lab_ocurrencias");
+		$modelOcurrencia->setId("idocurrencia");
+
+		$cabeceraOcurrencia = $modelOcurrencia
+			->where("idprestamo", $data["idprestamo"])
+			->first();
+
+		$detallelOcurrencia = new TableModel;
+		$detallelOcurrencia->setTable("lab_detalle_ocurrencias");
+		$detallelOcurrencia->setId("id_detalle_ocurrencia");
+
+		$ocurrencias = $detallelOcurrencia
+			->where("iddetalle", $data["id"])
+			->get();
+
+		if (!empty($ocurrencias) && $cabeceraOcurrencia["idestado"] != "3") {
+			return $this->respondWithError($response, "El material tiene ocurrencias, no se puede devolver");
+		}
 
 		// obtener la cantidad a retornar
 		$cantidad = $existe["cantidad"];
@@ -813,5 +834,31 @@ class LaboratorioController extends Controller
 		// salida
 		// retornar mensaje de exito o error
 		return $this->respondWithSuccess($response, "Material devuelto correctamente");
+	}
+
+	public function completarIngreso($request, $response)
+	{
+		$data = $this->sanitize($request->getParsedBody());
+		if (empty($data["id"])) {
+			return $this->respondWithError($response, "Error de validación, por favor recargue la página.");
+		}
+		$model = new TableModel;
+		$model->setTable("lab_ingresos_laboratorios");
+		$model->setId("idingreso");
+		$existe = $model->find($data["id"]);
+		if (empty($existe)) {
+			return $this->respondWithError($response, "No se encontro el registro");
+		}
+		if ($existe["completado"] == 1) {
+			return $this->respondWithError($response, "El ingreso ya fue completado");
+		}
+		if ($existe["cancelado"] == 1) {
+			return $this->respondWithError($response, "El ingreso fue cancelado, no se puede completar");
+		}
+		$rq = $model->update($data["id"], ["completado" => 1]);
+		if (!empty($rq)) {
+			return $this->respondWithSuccess($response, "Ingreso completado correctamente");
+		}
+		return $this->respondWithError($response, "Error al completar el ingreso.");
 	}
 }

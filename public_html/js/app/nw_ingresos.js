@@ -15,8 +15,8 @@ $(document).ready(function () {
   autosize($("#observaciones"));
 
   tb = $("#tbl").dataTable({
-    aProcessing: true,
-    aServerSide: true,
+    // sProcessing: true,
+    // bServerSide: true,
     language: {
       url: base_url + "js/app/plugins/dataTable.Spanish.json",
     },

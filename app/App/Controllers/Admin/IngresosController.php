@@ -7,8 +7,6 @@ use App\Controllers\Clases\MovimientosClass;
 use App\Controllers\Controller;
 use App\Models\TableModel;
 use Exception;
-use Slim\Csrf\Guard;
-use Slim\Psr7\Factory\ResponseFactory;
 
 class IngresosController extends Controller
 {
@@ -490,6 +488,11 @@ class IngresosController extends Controller
 
         $articulo = $model->find($data["id"]);
         if (!empty($articulo)) {
+            // verificar si el articulo en cuestion no tiene movimientos
+            // primero obtener el idbalance del iddetalle
+            // buscarlo en lab_detalle_prestamos con el estado en vacio o null
+            // busrcarlo en lab_detalle_ocurrencias con estado diferente de completado
+
             $rq = $model->delete($data["id"]);
             if (!empty($rq)) {
                 // descuenta el stock en lab_balance_inventarios
@@ -500,12 +503,12 @@ class IngresosController extends Controller
                 $clsMovimientos->store([
                     "idbalance" => $respuesta["idbalance"],
                     "idinventariodetalle" => $articulo["idinventariodetalle"],
-                    "tipo_movimiento" => 2,
+                    "tipo_movimiento" => 0,
                     "tipo_detalle" => 1,
                     "idmedida" => $articulo["idmedida"],
                     "cantidad" => $articulo["cantidad"],
                     "factor" => $articulo["factor"],
-                    "observaciones" => "Salida de inventario por eliminacion de articulo."
+                    "observaciones" => "Salida de inventario por eliminación de articulo en ingreso."
                 ]);
                 return $this->respondWithSuccess($response, "Datos eliminados correctamente. " . $respuesta["message"]);
             }

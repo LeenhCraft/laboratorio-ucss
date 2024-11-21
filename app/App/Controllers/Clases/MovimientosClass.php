@@ -7,11 +7,11 @@ use App\Models\TableModel;
 class MovimientosClass
 {
     /* 
-    los diferentes tipos de movimientos son:
+    los diferentes tipos de movimientos (tipo_movimiento) son:
     1 = Ingreso
     0 = Salida
 
-    los diferentes tipos de detalle son:
+    los diferentes tipos de detalle (tipo_detalle) son:
     1 = por Inventario
     2 = por Prestamo
     3 = por Devolucion

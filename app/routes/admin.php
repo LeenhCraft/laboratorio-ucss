@@ -12,6 +12,7 @@ use App\Controllers\Admin\LaboratorioController;
 use App\Controllers\Admin\LoginAdminController;
 use App\Controllers\Admin\MaterialesController;
 use App\Controllers\Admin\MenusController;
+use App\Controllers\Admin\OcurrenciasController;
 use App\Controllers\Admin\PermisosController;
 use App\Controllers\Admin\PersonasController;
 use App\Controllers\Admin\RolesController;
@@ -169,5 +170,19 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->post('/dm', LaboratorioController::class . ':deleteMaterialIngreso');
         $group->post('/c', LaboratorioController::class . ':cancelarIngreso');
         $group->post('/r', LaboratorioController::class . ':articuloDevuelto');
+        $group->post('/i', LaboratorioController::class . ':completarIngreso');
+    })->add(PermissionMiddleware::class);
+
+    $group->group('/ocurrencias', function (RouteCollectorProxy $group) {
+        $group->get('', OcurrenciasController::class . ':index')->add(new RemoveCsrfMiddleware());
+        $group->get('/list', OcurrenciasController::class . ':list');
+        $group->get('/ingresos', OcurrenciasController::class . ':listIngresos');
+        $group->get('/ingresos/{idingreso}', OcurrenciasController::class . ':searchIngreso');
+        $group->get('/materiales/{idingreso}', OcurrenciasController::class . ':listMateriales');
+
+        $group->post('/save', OcurrenciasController::class . ':store');
+        $group->post('/search', OcurrenciasController::class . ':search');
+        $group->post('/generarpdf', OcurrenciasController::class . ':generarpdf');
+        $group->get('/generarpdf', OcurrenciasController::class . ':generarpdf');
     })->add(PermissionMiddleware::class);
 })->add(new LoginAdminMiddleware());

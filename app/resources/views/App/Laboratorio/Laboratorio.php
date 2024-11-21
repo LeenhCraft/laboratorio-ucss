@@ -44,16 +44,16 @@
         <h4 class="fs-2 text-center">Ingreso Laboratorio UCSS</h4>
 
         <?php
-        if ($data['permisos']['perm_w'] == 1) :
+        if ($data['permisos']['perm_w'] == 1) {
         ?>
             <button id="btnNuevo" class="btn btn-primary fw-semibold" type="button">
                 <i class='bx bx-plus-circle me-2'></i> Nuevo
             </button>
         <?php
-        endif;
+        }
         ?>
     </div>
-    <div class="table-responsive text-nowrap mb-4">
+    <div class="table-responsive text mb-4">
         <table id="tbl" class="table" width="100%">
             <thead>
                 <tr>

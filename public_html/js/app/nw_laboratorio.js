@@ -33,19 +33,7 @@ $(document).ready(function () {
       if (data.cancelado == 1) {
         // $(row).addClass("cancelled-row table-light");
         $(row).addClass("table-light");
-
-        /*  // Agregar un div contenedor para mantener el layout original
-        $("td:first", row).prepend(`
-          <div class="cancelled-banner">
-            <div class="cancelled-content">
-              <i class="fa-solid fa-ban me-2"></i>
-              <span class="cancelled-text">Ingreso Cancelado</span>
-            </div>
-          </div>
-        `); */
       }
-
-      // ------------------------
     },
     columns: [
       {
@@ -53,47 +41,38 @@ $(document).ready(function () {
         width: "10%",
         className: "px-1",
         render: function (data, type, row, meta) {
-          let btnRet = (labelCancelado = "");
+          const estado = {
+            cancelado: data.cancelado === 1,
+            completado: data.completado === 1,
+            fechaValida: data.fecha >= new Date().toLocaleDateString("en-CA"),
+          };
+
           if (row.cancelado == 1) {
-            labelCancelado = `<span class="badge bg-label-danger text-danger text-capitalize fw-bold">Cancelado</span>`;
+            return `<span class="badge bg-label-danger text-danger text-capitalize fw-bold">Cancelado</span>`;
           }
-          btnRet = `
-          <button type="button" class="btn px-1 badge bg-label-warning" title="Devolver Articulos" onclick="modalRetornar('${data.idingreso}')">
-            <i class='bx bx-arrow-back bx-sm'></i>
-          </button>`;
-          // agregar el boton solo si no se ha pasado la fecha y la hora
-          if (
-            row.fecha >= new Date().toLocaleDateString("en-CA") &&
-            row.cancelado == 0
-          ) {
+          if (row.completado == 1) {
             return `
-            <button 
-              class="btn px-1 text-danger" 
-              type="button" 
-              title="cancelar ingreso" 
-              onclick="cancelarIngreso('${data.idingreso}','${data.fecha}','${data.hora_fin}')"
-            >
-                <i class="fa-solid fa-ban me-1"></i>
-                <span class="small fw-semibold">Cancelar</span>
-            </button>
-            <button class="btn px-1 badge bg-label-success" type="button" title="Agregar Articulos" onclick="modalCargo('${data.idingreso}')">
-              <i class="fa-solid fa-boxes-packing bx-sm"></i>
-            </button>
-          ${btnRet}
-          `;
-          }
-          if (
-            row.fecha <= new Date().toLocaleDateString("en-CA") &&
-            row.cancelado == 0
-          ) {
-            return `
-            <button class="btn px-1 badge bg-label-dark" type="button" title="Ver Articulos Prestados" onclick="verArticulos('${data.idingreso}')">
-              <i class="fa-solid fa-box bx-sm"></i>
-            </button>
-          ${btnRet}
+             <div class="d-flex gap-1">
+              <button 
+                class="btn px-1 badge bg-label-dark" 
+                type="button" 
+                title="Ver Artículos Prestados" 
+                onclick="verArticulos('${data.idingreso}')"
+              >
+                <i class="fa-solid fa-box bx-sm"></i>
+              </button>
+              <button 
+                type="button" 
+                class="btn px-1 badge bg-label-warning" 
+                title="Devolver Artículos" 
+                onclick="modalRetornar('${data.idingreso}')"
+              >
+                <i class='bx bx-arrow-back bx-sm'></i>
+              </button>
+            </div>
             `;
           }
-          return `${labelCancelado}`;
+          return renderizarEstadoPendiente(data, estado.fechaValida);
         },
       },
       {
@@ -117,7 +96,11 @@ $(document).ready(function () {
       {
         data: null,
         render: function (data, type, row, meta) {
-          return data.docente;
+          let completado = "";
+          if (row.completado == 1) {
+            completado = `<span class="badge bg-label-success text-success fw-bold">Completado</span>`;
+          }
+          return `<p class="p-0 m-0">${data.docente}</p>${completado}`;
         },
       },
       {
@@ -134,13 +117,79 @@ $(document).ready(function () {
       },
     ],
     iDisplayLength: 25,
+    lengthMenu: [5, 10, 15, 25, 50, 100],
     order: [
       [1, "desc"],
       [2, "asc"],
     ],
-    scrollX: true,
+    // scrollX: true,
   });
 });
+
+// Renderiza el estado pendiente
+function renderizarEstadoPendiente(data, fechaValida) {
+  let botones = "";
+
+  // Botones que solo se muestran si la fecha es válida
+  if (fechaValida) {
+    botones += `
+      <button 
+        class="btn px-1 text-danger" 
+        type="button" 
+        title="Cancelar ingreso" 
+        onclick="cancelarIngreso('${data.idingreso}','${data.fecha}','${data.hora_fin}')"
+      >
+        <i class='bx bx-block bx-sm'></i>
+      </button>
+      <button 
+        class="btn px-1 text-success" 
+        type="button" 
+        title="Agregar Artículos" 
+        onclick="modalCargo('${data.idingreso}')"
+      >
+        <i class="fa-solid fa-boxes-packing bx-sm"></i>
+      </button>
+    `;
+  }
+
+  // Botón de completar siempre visible si no está completado
+  botones += `
+    <button 
+      class="btn px-1 text-info" 
+      type="button"
+      title="Completar Ingreso"
+      onclick="completarIngreso('${data.idingreso}')"
+    >
+      <i class='bx bx-check-circle bx-sm'></i>
+    </button>
+  `;
+
+  // Botón de ver artículos
+  botones += `
+    <button
+      class="btn px-1 badge bg-label-dark"
+      type="button"
+      title="Ver Artículos Prestados"
+      onclick="verArticulos('${data.idingreso}')"
+    >
+      <i class="fa-solid fa-box bx-sm"></i>
+    </button>
+  `;
+
+  // Botón de retornar
+  botones += `
+    <button 
+      type="button" 
+      class="btn px-1 badge bg-label-warning" 
+      title="Devolver Artículos" 
+      onclick="modalRetornar('${data.idingreso}')"
+    >
+      <i class='bx bx-arrow-back bx-sm'></i>
+    </button>
+  `;
+
+  return `<div class="d-flex gap-1 mb-md-2">${botones}</div>`;
+}
 
 $("#btnNuevo").on("click", function () {
   resetForm();
@@ -324,8 +373,47 @@ function resetForm() {
 }
 
 function generateDropdownMenu(row) {
-  let options = [];
-  if (row.edit && row.fecha >= new Date().toLocaleDateString("en-CA")) {
+  const options = [];
+  const isFechaFutura = row.fecha >= new Date().toLocaleDateString("en-CA");
+  const tienePermisos = row.edit || row.delete;
+  const estaCancelado = row.cancelado === 1;
+  const estaCompletado = row.completado === 1;
+
+  // Registrar Ocurrencia siempre estará visible
+  options.push(
+    generateDropdownOption(
+      "Registrar Ocurrencia",
+      "bx bx-error-circle",
+      `modalOcurrencia(${row.idingreso})`
+    )
+  );
+
+  options.push(
+    generateDropdownOption(
+      "Control de ingreso PDF",
+      "bx bxs-file-pdf",
+      `modalOcurrencia(${row.idingreso})`
+    )
+  );
+
+  options.push(
+    generateDropdownOption(
+      "Cargo de salida <br> equipos PDF",
+      "bx bxs-file-pdf",
+      `modalOcurrencia(${row.idingreso})`
+    )
+  );
+
+  // Si está cancelado, solo mostrar "No se puede editar" además de Registrar Ocurrencia
+  if (estaCancelado) {
+    options.push(
+      generateDropdownOption("No se puede editar", "bx bxs-info-circle", "")
+    );
+    return generarDropdownHTML(options);
+  }
+
+  // Editar: solo si tiene permiso de edición y la fecha es futura
+  if (row.edit && isFechaFutura) {
     options.push(
       generateDropdownOption(
         "Editar",
@@ -335,13 +423,8 @@ function generateDropdownMenu(row) {
     );
   }
 
-  if (row.edit && row.fecha < new Date().toLocaleDateString("en-CA")) {
-    options.push(
-      generateDropdownOption("Sin acciones", "bx bxs-info-circle", ``)
-    );
-  }
-
-  if (row.delete) {
+  // Eliminar: solo si tiene permiso de eliminación y no está completado
+  if (row.delete && !estaCompletado) {
     options.push(
       generateDropdownOption(
         "Eliminar",
@@ -351,31 +434,21 @@ function generateDropdownMenu(row) {
     );
   }
 
-  if (row.cancelado == 1) {
-    // agregar una opcion que diga no se puede editar
-    options.push(
-      generateDropdownOption("No se puede editar", "bx bxs-info-circle", ``)
-    );
-    // quitar el editar
-    options = options.filter((option) => !option.includes("Editar"));
-  }
+  return generarDropdownHTML(options);
+}
 
-  if (!row.edit && !row.delete) {
-    options.push(
-      generateDropdownOption("Sin acciones", "bx bxs-info-circle", ``)
-    );
-  }
-  let optionsString = options.join("");
+// Función auxiliar para generar el HTML del dropdown
+function generarDropdownHTML(options) {
   return `
-        <div class="d-flex flex-row">
-        <div class="ms-3 dropdown">
-            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-            <i class="bx bx-dots-vertical-rounded"></i>
-            </button>
-            <div class="dropdown-menu">${optionsString}</div>
-        </div>
-        </div>
-    `;
+    <div class="d-flex flex-row">
+      <div class="ms-3 dropdown">
+        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+          <i class="bx bx-dots-vertical-rounded"></i>
+        </button>
+        <div class="dropdown-menu">${options.join("")}</div>
+      </div>
+    </div>
+  `;
 }
 
 function generateDropdownOption(text, iconClass, onClickFunction) {
@@ -900,7 +973,7 @@ function modalRetornar(id) {
         className: "text-center",
         render: function (data, type, row, meta) {
           return `
-          <button class="btn btn-sm btn-success" type="button" onclick="retornarArticulo('${data.iddetalle}')">
+          <button class="btn btn-sm btn-success" type="button" onclick="retornarArticulo('${data.iddetalle}','${data.idprestamo}')">
             <i class="fa-solid fa-arrow-rotate-left bx-xs"></i>
           </button>`;
         },
@@ -925,32 +998,81 @@ function modalRetornar(id) {
   });
 }
 
-function retornarArticulo(id) {
+function retornarArticulo(id,idprestamo) {
   // enviar el id al backend para que se actualice el estado del articulo
   // el backend debe devolver un mensaje de confirmación
   // si el articulo se retorna, se debe recargar la tabla, en los datos retornados debe haber un valor que
   // indique que ya ha sido retornado
   // si el articulo no se retorna, se debe mostrar un mensaje de error
-  divLoading.css("display", "flex");
-  let ajaxUrl = base_url + "admin/laboratorio/r";
-  $.post(ajaxUrl, { id }, function () {})
-    .done(function (response) {
-      if (response.status) {
-        tblr.ajax.reload();
-      }
-      Toast.fire({
-        icon: response.status ? "success" : "error",
-        title: response.message,
-      });
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-      Toast.fire({
-        icon: "error",
-        title: "error: " + errorThrown,
-      });
-      console.log(jqXHR, textStatus, errorThrown);
-    })
-    .always(function () {
-      divLoading.css("display", "none");
-    });
+  Swal.fire({
+    title: "Retornar Artículo",
+    text: "Estas seguro de retornar este artículo?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Si, Completar!",
+    cancelButtonText: "No, cancelar!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      divLoading.css("display", "flex");
+      $.post(base_url + "admin/laboratorio/r", { id,idprestamo }, function () {})
+        .done(function (response) {
+          if (response.status) {
+            tblr.ajax.reload();
+          }
+          Toast.fire({
+            icon: response.status ? "success" : "error",
+            title: response.message,
+          });
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          Toast.fire({
+            icon: "error",
+            title: "error: " + errorThrown,
+          });
+          console.log(jqXHR, textStatus, errorThrown);
+        })
+        .always(function () {
+          divLoading.css("display", "none");
+        });
+    }
+  });
+}
+
+function completarIngreso(id) {
+  Swal.fire({
+    title: "Completar Ingreso",
+    text: "Esta accion es irreversible, ¿Desea completar el ingreso?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Si, Completar!",
+    cancelButtonText: "No, cancelar!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      divLoading.css("display", "flex");
+      $.post(base_url + "admin/laboratorio/i", { id }, function () {})
+        .done(function (response) {
+          if (response.status) {
+            tb.api().ajax.reload();
+          }
+          Toast.fire({
+            icon: response.status ? "success" : "error",
+            title: response.message,
+          });
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          Toast.fire({
+            icon: "error",
+            title: "error: " + errorThrown,
+          });
+          console.log(jqXHR, textStatus, errorThrown);
+        })
+        .always(function () {
+          divLoading.css("display", "none");
+        });
+    }
+  });
+}
+
+function modalOcurrencia(id) {
+  window.location.href = `/admin/ocurrencias?idingreso=${id}`;
 }

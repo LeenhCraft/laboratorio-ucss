@@ -7,8 +7,8 @@ $(document).ready(function () {
     const url = base_url + "admin/login";
     $.post(url, form, function () {})
       .done(function (data) {
-        const { status, message, data: responseData } = data;
-        const titleMessage = status ? `${message}<br>${responseData}` : message;
+        const { status, message } = data;
+        const titleMessage = message;
         Toast.fire({
           title: titleMessage,
           icon: status ? "success" : "error",

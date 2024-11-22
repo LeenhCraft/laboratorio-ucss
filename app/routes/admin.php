@@ -161,14 +161,17 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->post('/delete', LaboratorioController::class . ':delete');
 
         $group->get('/docentes', LaboratorioController::class . ':listDocentes');
-        $group->post('/d', LaboratorioController::class . ':storeDocente');
         $group->get('/m', LaboratorioController::class . ':listMateriales');
+        $group->get('/pdf', LaboratorioController::class . ':generarpdf');
+        $group->post('/d', LaboratorioController::class . ':storeDocente');
         $group->post('/lm', LaboratorioController::class . ':listMaterialesIngreso');
         $group->post('/sm', LaboratorioController::class . ':storeMaterialIngreso');
         $group->post('/dm', LaboratorioController::class . ':deleteMaterialIngreso');
         $group->post('/c', LaboratorioController::class . ':cancelarIngreso');
         $group->post('/r', LaboratorioController::class . ':articuloDevuelto');
         $group->post('/i', LaboratorioController::class . ':completarIngreso');
+
+        $group->get('/demo', LaboratorioController::class . ':demo');
     })->add(PermissionMiddleware::class);
 
     $group->group('/ocurrencias', function (RouteCollectorProxy $group) {

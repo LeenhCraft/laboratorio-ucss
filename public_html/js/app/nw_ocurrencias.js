@@ -214,7 +214,6 @@ function verDetalles(id) {
       if (response.status) {
         // Llenar los datos en el modal
         const data = response.data;
-        console.log(data);
 
         // Actualizar el título y fecha
         $("#mdlVerOcurrencias .fs-5.text-secondary").text(data.titulo_practica);
@@ -326,7 +325,7 @@ function generarPDF(data) {
 
   // Actualizar el título del modal con el título de la práctica
   const modalTitle = document.querySelector("#mdlVerPDF .modal-title");
-  modalTitle.textContent = `Ocurrencia - ${data.titulo_practica}`;
+  modalTitle.textContent = `Ocurrencia - ${data.titulo_practica} - ${data.asignatura} - ${data.carrera}`;
 
   // Establecer la URL del PDF en el embed
   pdfEmbed.src = pdfURL;

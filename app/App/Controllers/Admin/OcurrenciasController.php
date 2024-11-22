@@ -266,6 +266,7 @@ class OcurrenciasController extends Controller
                 "lab_ingresos_laboratorios.idingreso",
                 "lab_ingresos_laboratorios.titulo_practica",
                 "lab_ingresos_laboratorios.asignatura",
+                "lab_ingresos_laboratorios.carrera",
                 "lab_ocurrencias.idocurrencia",
                 "lab_ocurrencias.idprestamo",
                 "lab_ocurrencias.fecha",
@@ -672,14 +673,17 @@ class OcurrenciasController extends Controller
                     <div class="large-content"></div>
                 </div>
 
-                <div class="signature-section">
-                    <div class="signature">
-                        <div class="signature-line">FIRMA DEL DOCENTE</div>
+                <div style="margin-top: 100px; width: 100%;">
+                    <div style="width: 45%; float: left; text-align: center;">
+                        <div style="border-top: 1px solid black; width: 100%; margin-bottom: 5px;"></div>
+                        FIRMA DEL DOCENTE
                     </div>
-                    <div class="signature">
-                        <div class="signature-line">FIRMA DEL ESTUDIANTE</div>
+                    <div style="width: 45%; float: right; text-align: center;">
+                        <div style="border-top: 1px solid black; width: 100%; margin-bottom: 5px;"></div>
+                        FIRMA DEL ESTUDIANTE
                     </div>
-                </div>';
+                </div>
+                <div style="clear: both;"></div>';
 
             $mpdf->WriteHTML($html);
 

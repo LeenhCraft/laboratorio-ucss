@@ -392,7 +392,7 @@ function generateDropdownMenu(row) {
     generateDropdownOption(
       "Control de ingreso PDF",
       "bx bxs-file-pdf",
-      `modalOcurrencia(${row.idingreso})`
+      `pdfIngreso(${JSON.stringify(row).replace(/"/g, "'")},1)`
     )
   );
 
@@ -400,7 +400,7 @@ function generateDropdownMenu(row) {
     generateDropdownOption(
       "Cargo de salida <br> equipos PDF",
       "bx bxs-file-pdf",
-      `modalOcurrencia(${row.idingreso})`
+      `pdfIngreso(${JSON.stringify(row).replace(/"/g, "'")},2)`
     )
   );
 
@@ -1081,4 +1081,44 @@ function completarIngreso(id) {
 
 function modalOcurrencia(id) {
   window.location.href = `/admin/ocurrencias?idingreso=${id}`;
+}
+
+function pdfIngreso(data, tipo) {
+  divLoading.css("display", "flex");
+
+  // Generar URL segura con base_url
+  const pdfURL =
+    base_url + "admin/laboratorio/pdf?idingreso=" + data.idingreso + "&tipo=" + tipo;
+
+  // Obtener el modal y el embed del PDF
+  const modal = new bootstrap.Modal(document.getElementById("mdlVerPDF"));
+  const pdfEmbed = document.getElementById("pdf");
+
+  // Actualizar el título del modal con el título de la práctica
+  const modalTitle = document.querySelector("#mdlVerPDF .modal-title");
+  modalTitle.textContent = `Ingreso - ${data.titulo_practica} - ${data.asignatura} - ${data.carrera}`;
+
+  // Establecer la URL del PDF en el embed
+  pdfEmbed.src = pdfURL;
+
+  // Manejar errores de carga del PDF
+  pdfEmbed.onerror = function () {
+    Toast.fire({
+      icon: "info",
+      title: "Error al cargar el PDF. Por favor, intente nuevamente.",
+    });
+    modal.hide();
+  };
+
+  // Mostrar el modal
+  modal.show();
+
+  // Limpiar el embed cuando se cierre el modal
+  document
+    .getElementById("mdlVerPDF")
+    .addEventListener("hidden.bs.modal", function () {
+      pdfEmbed.src = "";
+    });
+
+  divLoading.css("display", "none");
 }

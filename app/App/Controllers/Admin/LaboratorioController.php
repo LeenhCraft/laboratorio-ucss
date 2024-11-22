@@ -865,4 +865,268 @@ class LaboratorioController extends Controller
 		}
 		return $this->respondWithError($response, "Error al completar el ingreso.");
 	}
+
+	public function generarPdf($request, $response)
+	{
+		$data = $this->sanitize($request->getQueryParams());
+
+		$mpdf = new \Mpdf\Mpdf([
+			'margin_left' => 15,
+			'margin_right' => 15,
+			'margin_top' => 15,
+			'margin_bottom' => 15
+		]);
+
+		switch ($data["tipo"]) {
+			case '1':
+				$html = $this->controlIngreso($data);
+				break;
+
+			case '2':
+				$html = $this->salidaEquipos($data);
+				break;
+
+			default:
+				$html = ':p';
+				break;
+		}
+
+
+		$mpdf->WriteHTML($html);
+
+		$pdfContent = $mpdf->Output('', 'S');
+
+		$response = $response->withHeader('Content-Type', 'application/pdf');
+		$response = $response->withHeader('Content-Disposition', 'inline; filename="taller_docente.pdf"');
+		$response->getBody()->write($pdfContent);
+
+		return $response;
+	}
+
+	public function controlIngreso($data)
+	{
+		$model = new TableModel;
+		$model->setTable("lab_ingresos_laboratorios");
+		$model->setId("idingreso");
+
+		$arrData = $model
+			->select(
+				"lab_docentes.nombre as docente",
+				"lab_ingresos_laboratorios.*",
+			)
+			->join("lab_docentes", "lab_ingresos_laboratorios.iddocente", "lab_docentes.iddocente")
+			->where("idingreso", $data["idingreso"])
+			->first();
+
+		$html = '
+		<style>
+			table { width: 100%; border-collapse: collapse; }
+			td { border: 1px solid black; padding: 5px; }
+			.header { text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 20px; }
+			.logo { position: absolute; top: 10px; right: 10px; width: 60px; }
+			.firma { text-align: center; margin-top: 20px; }
+		</style>
+		
+		<div>
+			<img src="/img/logo.png" class="logo">
+			<div class="header">CONTROL DEL INGRESO AL TALLER- DOCENTE</div>
+			
+			<table cellpadding="5">
+				<tr>
+					<td width="30%">TÍTULO DE PRÁCTICA</td>
+					<td width="70%"><b>' . ($arrData['titulo_practica'] ?? '') . '</b></td>
+				</tr>
+				<tr>
+					<td>N° PRÁCTICAS</td>
+					<td><b>' . ($arrData['nro_practicas'] ?? '') . '</b>
+						<span style="float:right">PROGRAMA DE ESTUDIO: <b>' . ($arrData['carrera'] ?? '') . '</b></span>
+					</td>
+				</tr>
+				<tr>
+					<td>DOCENTE</td>
+					<td><b>' . ($arrData['docente'] ?? '') . '</b></td>
+				</tr>
+				<tr>
+					<td>ASIGNATURA</td>
+					<td><b>' . ($arrData['asignatura'] ?? '') . '</b></td>
+				</tr>
+				<tr>
+					<td>TURNO</td>
+					<td><b>' . ($arrData['turno'] ?? '') . '</b></td>
+				</tr>
+				<tr>
+					<td>HORA INICIO</td>
+					<td><b>' . ($arrData['hora_inicio'] ?? '') . '</b>
+						<span style="margin-left:20px">HORA TÉRMINO: <b>' . ($arrData['hora_fin'] ?? '') . '</b></span>
+					</td>
+				</tr>
+			</table>
+			
+			<table style="margin-top: 10px">
+				<tr>
+					<td width="10%">Cant.</td>
+					<td width="40%">Equipo/Materiales</td>
+					<td width="10%">Cant.</td>
+					<td width="40%">Equipo/Materiales</td>
+				</tr>';
+
+		// Add 5 empty rows
+		for ($i = 0; $i < 5; $i++) {
+			$html .= '
+				<tr>
+					<td height="25px"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>';
+		}
+
+		$html .= '
+			</table>
+			
+			<div class="firma">
+				<div style="margin-top: 100px; border-top: 1px solid black; width: 250px; margin-left: auto; margin-right: auto;"></div>
+				FIRMA DEL DOCENTE
+			</div>
+		</div>';
+		return $html;
+	}
+
+	public function salidaEquipos($data)
+	{
+		$model = new TableModel;
+		$model->setTable("lab_ingresos_laboratorios");
+		$model->setId("idingreso");
+
+		$arrData = $model
+			->select(
+				"lab_docentes.nombre as docente",
+				"lab_ingresos_laboratorios.*",
+			)
+			->join("lab_docentes", "lab_ingresos_laboratorios.iddocente", "lab_docentes.iddocente")
+			->join("lab_prestamos", "lab_ingresos_laboratorios.idingreso", "lab_prestamos.idingreso")
+			->where("lab_ingresos_laboratorios.idingreso", $data["idingreso"])
+			->first();
+
+		// dep($arrData, 1);
+
+		$detalle = new TableModel;
+		$detalle->setTable("lab_detalle_prestamos");
+		$detalle->setId("iddetalle");
+
+		$equipos = $detalle
+			->select(
+				"
+				CASE
+                    WHEN lab_balance_inventarios.idproducto > 0 THEN lab_productos.nombre
+                    WHEN lab_balance_inventarios.idinsumo > 0 THEN lab_insumos.nombre
+                    WHEN lab_balance_inventarios.idmaterial > 0 THEN lab_materiales.nombre
+                END as nombre
+				",
+				"lab_detalle_prestamos.cantidad",
+				"lab_detalle_prestamos.estado",
+				"CASE
+                    WHEN lab_balance_inventarios.idproducto > 0 THEN a.nombre
+                    WHEN lab_balance_inventarios.idinsumo > 0 THEN b.nombre
+                    WHEN lab_balance_inventarios.idmaterial > 0 THEN c.nombre
+                END as condicion"
+			)
+			->join("lab_balance_inventarios", "lab_detalle_prestamos.idbalance", "lab_balance_inventarios.idbalance")
+			->leftJoin("lab_productos", "lab_balance_inventarios.idproducto", "lab_productos.idproducto")
+			->leftJoin("lab_insumos", "lab_balance_inventarios.idinsumo", "lab_insumos.idinsumo")
+			->leftJoin("lab_materiales", "lab_balance_inventarios.idmaterial", "lab_materiales.idmaterial")
+			->leftJoin("lab_detalle_inventarios p", "lab_balance_inventarios.idproducto", "p.idproducto")
+			->leftJoin("lab_detalle_inventarios i", "lab_balance_inventarios.idinsumo", "i.idinsumo")
+			->leftJoin("lab_detalle_inventarios m", "lab_balance_inventarios.idmaterial", "m.idmaterial")
+			->leftJoin("lab_condiciones a", "p.idcondicion", "a.idcondicion")
+			->leftJoin("lab_condiciones b", "i.idcondicion", "b.idcondicion")
+			->leftJoin("lab_condiciones c", "m.idcondicion", "c.idcondicion")
+			->where("lab_detalle_prestamos.idprestamo", $arrData["idingreso"])
+			->get();
+
+		$equiposHtml = '';
+		foreach ($equipos as $key => $value) {
+			$equiposHtml .= '
+				<tr>
+					<td>' . $value["nombre"] . '</td>
+					<td>' . $value["cantidad"] . '</td>
+					<td>' . $value["condicion"] . '</td>
+				</tr>';
+		}
+
+		$html = '
+			<style>
+				body { font-family: Arial, sans-serif; }
+				.header { text-align: center; font-weight: bold; margin: 20px 0; font-size: 14pt; }
+				.logos { position: relative; width: 100%; height: 50px; }
+				.logo-left { position: absolute; left: 10px; height: 40px; }
+				table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+				td, th { border: 1px solid black; padding: 5px; }
+				.nota { font-size: 14px; }
+				.firmas { margin-top: 30px; display: table; width: 100%; }
+				.firma { display: table-cell; text-align: center; width: 45%; }
+				.firma-linea { border-top: 1px solid black; width: 80%; margin: 50px auto 5px; }
+				.mb-30px { margin-bottom: 30px; }
+			</style>
+		
+			<div class="logos">
+				<img src="/img/logo.png" class="logo-left">
+			</div>
+		
+			<div class="header">CARGO DE SALIDA DE EQUIPOS Y/O MATERIALES</div>
+		
+			<div class="nota mb-30px">
+				1. Los estudiantes o docentes que suscriben el presente <b>SOLICITAN EN CALIDAD DE PRÉSTAMO</b>, los siguientes equipos, aparatos y/o materiales para realizar exclusivamente prácticas.
+			</div>
+		
+			<table class="mb-30px">
+				<tr>
+					<th width="50%">EQUIPO/MATERIALES</th>
+					<th width="25%">CANTIDAD</th>
+					<th width="25%">ESTADO</th>
+				</tr>
+				' . ($equiposHtml) . '
+			</table>
+		
+			<div class="mb-30px">
+				2. La práctica corresponde al curso de: <b>' . ($arrData['asignatura'] ?? '') . '</b><br>
+				3. Docente a cargo: <b>' . ($arrData['docente'] ?? '') . '</b><br>
+				4. Carrera profesional: <b>' . ($arrData['carrera'] ?? '') . '</b> Turno: <b>' . ($arrData['turno'] ?? '') . '</b><br>
+				5. Fecha y hora de la salida del equipo: <b>' . ($arrData['fecha'] ?? '') . ' ' . ($arrData["hora_inicio"] ?? '') . '</b><br>
+				6. Fecha y hora de retorno del equipo: <b>' . ($arrData['fecha'] ?? '') . ' ' . ($arrData["hora_fin"] ?? '') . '</b>
+			</div>
+		
+			<div class="nota mb-30px">
+				<b>EL ESTUDIANTE, EQUIPO DE TRABAJO Y/O DOCENTE</b> se comprometen bajo firma a devolver los equipos y/o materiales en buen estado dentro de la fecha y hora indicada.
+				<br>• En caso de pérdida, robo y/o avería; el estudiante, equipo de trabajo y/o docente se compromete(n) asumir con los costos para su posterior devolución.
+			</div>
+		
+			<table>
+				<tr>
+					<th>ESTUDIANTE(S)</th>
+					<th>DNI</th>
+					<th>FIRMA</th>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+		
+			<div style="margin-top: 100px; width: 100%;">
+				<div style="width: 45%; float: left; text-align: center;">
+					<div style="border-top: 1px solid black; width: 80%; margin: 0 auto 5px;"></div>
+					DOCENTE
+				</div>
+				<div style="width: 45%; float: right; text-align: center;">
+					<div style="border-top: 1px solid black; width: 80%; margin: 0 auto 5px;"></div>
+					FIRMA DEL ESTUDIANTE RESPONSABLE
+				</div>
+			</div>
+			<div style="clear: both;"></div>';
+
+		// dep($html, 1);
+		return $html;
+	}
 }

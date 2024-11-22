@@ -197,7 +197,7 @@
 <!-- modal para ver un pdf -->
 
 <div class="modal fade" id="mdlVerPDF" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">PDF de la Ocurrencia</h5>

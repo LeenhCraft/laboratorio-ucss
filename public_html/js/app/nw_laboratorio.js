@@ -130,17 +130,21 @@ $(document).ready(function () {
 function renderizarEstadoPendiente(data, fechaValida) {
   let botones = "";
 
-  // Botones que solo se muestran si la fecha es válida
-  if (fechaValida) {
-    botones += `
-      <button 
+  // Boton para cancelar siempre visible
+  botones += `
+    <button 
         class="btn px-1 text-danger" 
         type="button" 
         title="Cancelar ingreso" 
         onclick="cancelarIngreso('${data.idingreso}','${data.fecha}','${data.hora_fin}')"
       >
         <i class='bx bx-block bx-sm'></i>
-      </button>
+    </button>
+  `;
+
+  // Botones que solo se muestran si la fecha es válida
+  if (fechaValida) {
+    botones += `
       <button 
         class="btn px-1 text-success" 
         type="button" 
@@ -849,14 +853,14 @@ async function cancelarIngreso(id, fechaIngreso, hora) {
   const ahora = new Date();
   const fechaHoraIngreso = new Date(`${fechaIngreso} ${hora}`);
 
-  if (fechaHoraIngreso <= ahora) {
-    Swal.fire({
-      icon: "error",
-      title: "No se puede cancelar",
-      text: "Solo se pueden cancelar ingresos futuros.",
-    });
-    return;
-  }
+  // if (fechaHoraIngreso <= ahora) {
+  //   Swal.fire({
+  //     icon: "error",
+  //     title: "No se puede cancelar",
+  //     text: "Solo se pueden cancelar ingresos futuros.",
+  //   });
+  //   return;
+  // }
 
   // Solicitar motivo de cancelación
   const { value: motivo, isConfirmed: motivoConfirmado } = await Swal.fire({
@@ -1088,7 +1092,11 @@ function pdfIngreso(data, tipo) {
 
   // Generar URL segura con base_url
   const pdfURL =
-    base_url + "admin/laboratorio/pdf?idingreso=" + data.idingreso + "&tipo=" + tipo;
+    base_url +
+    "admin/laboratorio/pdf?idingreso=" +
+    data.idingreso +
+    "&tipo=" +
+    tipo;
 
   // Obtener el modal y el embed del PDF
   const modal = new bootstrap.Modal(document.getElementById("mdlVerPDF"));

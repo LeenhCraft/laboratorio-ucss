@@ -275,7 +275,9 @@ class LaboratorioController extends Controller
 		// 		SELECT * 
 		// FROM lab_ingresos_laboratorios 
 		// WHERE hora_inicio BETWEEN '14:15:00' AND '15:00:00' 
-		//    OR hora_fin BETWEEN '14:15:00' AND '15:00:00' ;
+		//    OR hora_fin BETWEEN '14:15:00' AND '15:00:00'
+		//   AND fecha = '2021-09-15'
+		//   AND cancelado = 0;
 		$existe = $model
 			->orWhere(function ($query) use ($data) {
 				$query
@@ -745,9 +747,9 @@ class LaboratorioController extends Controller
 				]);
 			}
 			// poner el stock de materiales prestados a cero en el detalle del prestamo
-			foreach ($cuerpoPrestamo as $key => $value) {
-				$detalle->update($value["iddetalle"], ["cantidad" => 0]);
-			}
+			// foreach ($cuerpoPrestamo as $key => $value) {
+			// 	$detalle->update($value["iddetalle"], ["cantidad" => 0]);
+			// }
 		}
 
 		// cancelar el ingreso
@@ -891,8 +893,18 @@ class LaboratorioController extends Controller
 				break;
 		}
 
+		if ($html["data"]["cancelado"] == 1) {
+			$mpdf->SetProtection(array('print'));
+			// Configurar marca de agua de texto
+			$mpdf->SetWatermarkText('CANCELADO');
+			// $mpdf->watermarkTextSize = 60;
+			$mpdf->watermark_font = 'Arial';
+			$mpdf->showWatermarkText = true;
+			$mpdf->watermarkTextAlpha = 0.1;
+		}
 
-		$mpdf->WriteHTML($html);
+
+		$mpdf->WriteHTML($html["html"]);
 
 		$pdfContent = $mpdf->Output('', 'S');
 
@@ -903,7 +915,7 @@ class LaboratorioController extends Controller
 		return $response;
 	}
 
-	public function controlIngreso($data)
+	private function controlIngreso($data)
 	{
 		$model = new TableModel;
 		$model->setTable("lab_ingresos_laboratorios");
@@ -918,8 +930,9 @@ class LaboratorioController extends Controller
 			->where("idingreso", $data["idingreso"])
 			->first();
 
-
-		// dep($arrData, 1);
+		if (empty($arrData)) {
+			return "No se encontraron datos del ingreso al laboratorio";
+		}
 
 		$html = '
 			<style>
@@ -993,10 +1006,13 @@ class LaboratorioController extends Controller
 				FIRMA DEL DOCENTE
 			</div>
 		</div>';
-		return $html;
+		return [
+			"html" => $html,
+			"data" => $arrData
+		];
 	}
 
-	public function salidaEquipos($data)
+	private function salidaEquipos($data)
 	{
 		$model = new TableModel;
 		$model->setTable("lab_ingresos_laboratorios");
@@ -1012,7 +1028,10 @@ class LaboratorioController extends Controller
 			->where("lab_ingresos_laboratorios.idingreso", $data["idingreso"])
 			->first();
 
-		// dep($arrData, 1);
+		// si arrdata esta vacio, retornar mensaje de error
+		if (empty($arrData)) {
+			return "No se encontraron datos";
+		}
 
 		$detalle = new TableModel;
 		$detalle->setTable("lab_detalle_prestamos");
@@ -1020,43 +1039,38 @@ class LaboratorioController extends Controller
 
 		$equipos = $detalle
 			->select(
-				"
-				CASE
+				"CASE
                     WHEN lab_balance_inventarios.idproducto > 0 THEN lab_productos.nombre
                     WHEN lab_balance_inventarios.idinsumo > 0 THEN lab_insumos.nombre
                     WHEN lab_balance_inventarios.idmaterial > 0 THEN lab_materiales.nombre
-                END as nombre
-				",
+                END as nombre",
+				'lab_balance_inventarios.idproducto',
+				'lab_balance_inventarios.idinsumo',
+				'lab_balance_inventarios.idmaterial',
 				"lab_detalle_prestamos.cantidad",
 				"lab_detalle_prestamos.estado",
-				"CASE
-                    WHEN lab_balance_inventarios.idproducto > 0 THEN a.nombre
-                    WHEN lab_balance_inventarios.idinsumo > 0 THEN b.nombre
-                    WHEN lab_balance_inventarios.idmaterial > 0 THEN c.nombre
-                END as condicion"
 			)
+			->join("lab_prestamos", "lab_detalle_prestamos.idprestamo", "lab_prestamos.idprestamo")
 			->join("lab_balance_inventarios", "lab_detalle_prestamos.idbalance", "lab_balance_inventarios.idbalance")
 			->leftJoin("lab_productos", "lab_balance_inventarios.idproducto", "lab_productos.idproducto")
 			->leftJoin("lab_insumos", "lab_balance_inventarios.idinsumo", "lab_insumos.idinsumo")
 			->leftJoin("lab_materiales", "lab_balance_inventarios.idmaterial", "lab_materiales.idmaterial")
-			->leftJoin("lab_detalle_inventarios p", "lab_balance_inventarios.idproducto", "p.idproducto")
-			->leftJoin("lab_detalle_inventarios i", "lab_balance_inventarios.idinsumo", "i.idinsumo")
-			->leftJoin("lab_detalle_inventarios m", "lab_balance_inventarios.idmaterial", "m.idmaterial")
-			->leftJoin("lab_condiciones a", "p.idcondicion", "a.idcondicion")
-			->leftJoin("lab_condiciones b", "i.idcondicion", "b.idcondicion")
-			->leftJoin("lab_condiciones c", "m.idcondicion", "c.idcondicion")
-			->where("lab_detalle_prestamos.idprestamo", $arrData["idingreso"])
+			->where("lab_prestamos.idingreso", $arrData["idingreso"])
 			->get();
 
 		$equiposHtml = '';
-		foreach ($equipos as $key => $value) {
-			$equiposHtml .= '
+		if (!empty($equipos)) {
+			foreach ($equipos as $key => $value) {
+				$condicion = $this->obtenerCondicion($value);
+				$equiposHtml .= '
 				<tr>
 					<td>' . $value["nombre"] . '</td>
 					<td>' . $value["cantidad"] . '</td>
-					<td>' . $value["condicion"] . '</td>
+					<td>' . $condicion . '</td>
 				</tr>';
+			}
 		}
+
 
 		$html = '
 			<style>
@@ -1130,7 +1144,51 @@ class LaboratorioController extends Controller
 			</div>
 			<div style="clear: both;"></div>';
 
-		// dep($html, 1);
-		return $html;
+		return [
+			"html" => $html,
+			"data" => $arrData
+		];
+	}
+
+	private function obtenerCondicion($data)
+	{
+		$arrData = [];
+		if (!empty($data["idproducto"])) {
+			$producto = new TableModel;
+			$producto->setTable("lab_productos");
+			$producto->setId("idproducto");
+
+			$arrData = $producto
+				->select("lab_condiciones.nombre")
+				->join("lab_detalle_inventarios", "lab_productos.idproducto", "lab_detalle_inventarios.idproducto")
+				->join("lab_condiciones", "lab_detalle_inventarios.idcondicion", "lab_condiciones.idcondicion")
+				->where("lab_detalle_inventarios.idproducto", $data["idproducto"])
+				->first();
+		}
+		if (!empty($data["idinsumo"])) {
+			$insumo = new TableModel;
+			$insumo->setTable("lab_insumos");
+			$insumo->setId("idinsumo");
+
+			$arrData = $insumo
+				->select("lab_condiciones.nombre")
+				->join("lab_detalle_inventarios", "lab_insumos.idinsumo", "lab_detalle_inventarios.idinsumo")
+				->join("lab_condiciones", "lab_detalle_inventarios.idcondicion", "lab_condiciones.idcondicion")
+				->where("lab_detalle_inventarios.idinsumo", $data["idinsumo"])
+				->first();
+		}
+		if (!empty($data["idmaterial"])) {
+			$material = new TableModel;
+			$material->setTable("lab_materiales");
+			$material->setId("idmaterial");
+
+			$arrData = $material
+				->select("lab_condiciones.nombre")
+				->join("lab_detalle_inventarios", "lab_materiales.idmaterial", "lab_detalle_inventarios.idmaterial")
+				->join("lab_condiciones", "lab_detalle_inventarios.idcondicion", "lab_condiciones.idcondicion")
+				->where("lab_detalle_inventarios.idmaterial", $data["idmaterial"])
+				->first();
+		}
+		return $arrData["nombre"] ?? "-";
 	}
 }

@@ -1,5 +1,5 @@
 <div class="modal fade" id="mdlOcurrencias" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg">
         <form id="formOcurrencia" class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title title-laboratorio">

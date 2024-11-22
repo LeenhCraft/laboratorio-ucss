@@ -918,57 +918,61 @@ class LaboratorioController extends Controller
 			->where("idingreso", $data["idingreso"])
 			->first();
 
+
+		// dep($arrData, 1);
+
 		$html = '
-		<style>
-			table { width: 100%; border-collapse: collapse; }
-			td { border: 1px solid black; padding: 5px; }
-			.header { text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 20px; }
-			.logo { position: absolute; top: 10px; right: 10px; width: 60px; }
-			.firma { text-align: center; margin-top: 20px; }
-		</style>
+			<style>
+				table { width: 100%; border-collapse: collapse; }
+				td { border: 1px solid black; padding: 5px; }
+				.header { text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 20px; }
+				.logo { position: absolute; top: 10px; right: 10px; height: 50px; }
+				.firma { text-align: center; margin-top: 20px; }
+			</style>
 		
-		<div>
-			<img src="/img/logo.png" class="logo">
-			<div class="header">CONTROL DEL INGRESO AL TALLER- DOCENTE</div>
-			
-			<table cellpadding="5">
-				<tr>
-					<td width="30%">TÍTULO DE PRÁCTICA</td>
-					<td width="70%"><b>' . ($arrData['titulo_practica'] ?? '') . '</b></td>
-				</tr>
-				<tr>
-					<td>N° PRÁCTICAS</td>
-					<td><b>' . ($arrData['nro_practicas'] ?? '') . '</b>
-						<span style="float:right">PROGRAMA DE ESTUDIO: <b>' . ($arrData['carrera'] ?? '') . '</b></span>
-					</td>
-				</tr>
-				<tr>
-					<td>DOCENTE</td>
-					<td><b>' . ($arrData['docente'] ?? '') . '</b></td>
-				</tr>
-				<tr>
-					<td>ASIGNATURA</td>
-					<td><b>' . ($arrData['asignatura'] ?? '') . '</b></td>
-				</tr>
-				<tr>
-					<td>TURNO</td>
-					<td><b>' . ($arrData['turno'] ?? '') . '</b></td>
-				</tr>
-				<tr>
-					<td>HORA INICIO</td>
-					<td><b>' . ($arrData['hora_inicio'] ?? '') . '</b>
-						<span style="margin-left:20px">HORA TÉRMINO: <b>' . ($arrData['hora_fin'] ?? '') . '</b></span>
-					</td>
-				</tr>
-			</table>
-			
-			<table style="margin-top: 10px">
-				<tr>
-					<td width="10%">Cant.</td>
-					<td width="40%">Equipo/Materiales</td>
-					<td width="10%">Cant.</td>
-					<td width="40%">Equipo/Materiales</td>
-				</tr>';
+			<div>
+				<img src="/img/logo.png" class="logo">
+				<div class="header">CONTROL DEL INGRESO AL TALLER- DOCENTE</div>
+				
+				<table cellpadding="5">
+					<tr>
+						<td width="30%">TÍTULO DE PRÁCTICA</td>
+						<td width="70%"><b>' . ($arrData['titulo_practica'] ?? '') . '</b></td>
+					</tr>
+					<tr>
+						<td>N° PRÁCTICAS</td>
+						<td><b>' . ($arrData['nro_practicas'] ?? '') . '</b>
+							<span style="float:right">PROGRAMA DE ESTUDIO: <b>' . ($arrData['carrera'] ?? '') . '</b></span>
+						</td>
+					</tr>
+					<tr>
+						<td>DOCENTE</td>
+						<td><b>' . ($arrData['docente'] ?? '') . '</b></td>
+					</tr>
+					<tr>
+						<td>ASIGNATURA</td>
+						<td><b>' . ($arrData['asignatura'] ?? '') . '</b></td>
+					</tr>
+					<tr>
+						<td>TURNO</td>
+						<td><b>' . ($arrData['turno'] ?? '') . '</b></td>
+					</tr>
+					<tr>
+						<td>HORA INICIO</td>
+						<td><b>' . ($arrData['hora_inicio'] ?? '') . '</b>
+							<span style="margin-left:20px">HORA TÉRMINO: <b>' . ($arrData['hora_fin'] ?? '') . '</b></span>
+						</td>
+					</tr>
+				</table>
+				
+				<table style="margin-top: 10px">
+					<tr>
+						<td width="10%">Cant.</td>
+						<td width="40%">Equipo/Materiales</td>
+						<td width="10%">Cant.</td>
+						<td width="40%">Equipo/Materiales</td>
+					</tr>';
+
 
 		// Add 5 empty rows
 		for ($i = 0; $i < 5; $i++) {
@@ -1057,7 +1061,7 @@ class LaboratorioController extends Controller
 		$html = '
 			<style>
 				body { font-family: Arial, sans-serif; }
-				.header { text-align: center; font-weight: bold; margin: 20px 0; font-size: 14pt; }
+				.header { text-align: center; font-weight: bold; margin: 0 0 40px; font-size: 14pt; }
 				.logos { position: relative; width: 100%; height: 50px; }
 				.logo-left { position: absolute; left: 10px; height: 40px; }
 				table { width: 100%; border-collapse: collapse; margin: 10px 0; }

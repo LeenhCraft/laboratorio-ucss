@@ -487,7 +487,7 @@ function listIngresos() {
         );
         response.forEach((element) => {
           $("#titulo_practica").append(
-            `<option value="${element.idingreso}">${element.titulo_practica} | ${element.asignatura} | ${element.docente} | ${element.ciclo}</option>`
+            `<option value="${element.idingreso}">${element.titulo_practica} | ${element.asignatura} | ${element.docente}</option>`
           );
         });
         resolve(response);

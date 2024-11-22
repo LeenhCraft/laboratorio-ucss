@@ -53,7 +53,7 @@
         }
         ?>
     </div>
-    <div class="table-responsive text mb-4">
+    <div class="text-nowrap mb-4">
         <table id="tbl" class="table" width="100%">
             <thead>
                 <tr>

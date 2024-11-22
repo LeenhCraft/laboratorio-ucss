@@ -106,7 +106,7 @@ function cargar_ocurrencias(params) {
           };
 
           return `
-            <div class="col-12 col-md-8 mx-auto bg-white rounded-2 shadow-sm mb-4">
+            <div class="col-12 bg-white rounded-2 shadow-sm mb-4">
               <div class="p-4 border-bottom">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <div>
@@ -318,7 +318,7 @@ function generarPDF(data) {
 
   // Generar URL segura con base_url
   const pdfURL =
-    base_url + "admin/ocurrencias/generarpdf?idocurrencia=" + data.idocurrencia;
+    base_url + "admin/ocurrencias/pdf?idocurrencia=" + data.idocurrencia;
 
   // Abrir en nueva pestaña
   const newWindow = window.open(pdfURL, "_blank");

@@ -719,33 +719,37 @@ class LaboratorioController extends Controller
 		$prestamo->setTable("lab_prestamos");
 		$prestamo->setId("idprestamo");
 		$cabeceraPrestamo = $prestamo->where("idingreso", $data["id"])->first();
-		$detalle = new TableModel;
-		$detalle->setTable("lab_detalle_prestamos");
-		$detalle->setId("iddetalle");
-		$cuerpoPrestamo = $detalle->where("idprestamo", $cabeceraPrestamo["idprestamo"])->get();
-		foreach ($cuerpoPrestamo as $key => $value) {
-			$clsBalance = new BalanceClass;
-			$respuesta = $clsBalance->reponerStockPrestamo([
-				"idbalance" => $value["idbalance"],
-				"reponer_cantidad" => $value["cantidad"],
-			]);
-			// registrar el movimiento en el historial
-			$clsMovimientos = new MovimientosClass;
-			$clsMovimientos->store([
-				"idbalance" => $value["idbalance"],
-				"idinventariodetalle" => NULL,
-				"tipo_movimiento" => 1,
-				"tipo_detalle" => 3,
-				"idmedida" => 2,
-				"cantidad" => $value["cantidad"],
-				"factor" => 1,
-				"observaciones" => $data["motivo"] . " | Ingreso de inventario por cancelar un ingreso a laboratorio.",
-			]);
+
+		if (!empty($cabeceraPrestamo)) {
+			$detalle = new TableModel;
+			$detalle->setTable("lab_detalle_prestamos");
+			$detalle->setId("iddetalle");
+			$cuerpoPrestamo = $detalle->where("idprestamo", $cabeceraPrestamo["idprestamo"])->get();
+			foreach ($cuerpoPrestamo as $key => $value) {
+				$clsBalance = new BalanceClass;
+				$respuesta = $clsBalance->reponerStockPrestamo([
+					"idbalance" => $value["idbalance"],
+					"reponer_cantidad" => $value["cantidad"],
+				]);
+				// registrar el movimiento en el historial
+				$clsMovimientos = new MovimientosClass;
+				$clsMovimientos->store([
+					"idbalance" => $value["idbalance"],
+					"idinventariodetalle" => NULL,
+					"tipo_movimiento" => 1,
+					"tipo_detalle" => 3,
+					"idmedida" => 2,
+					"cantidad" => $value["cantidad"],
+					"factor" => 1,
+					"observaciones" => $data["motivo"] . " | Ingreso de inventario por cancelar un ingreso a laboratorio.",
+				]);
+			}
+			// poner el stock de materiales prestados a cero en el detalle del prestamo
+			foreach ($cuerpoPrestamo as $key => $value) {
+				$detalle->update($value["iddetalle"], ["cantidad" => 0]);
+			}
 		}
-		// poner el stock de materiales prestados a cero en el detalle del prestamo
-		foreach ($cuerpoPrestamo as $key => $value) {
-			$detalle->update($value["iddetalle"], ["cantidad" => 0]);
-		}
+
 		// cancelar el ingreso
 		$rq = $model->update($data['id'], ["cancelado" => 1]);
 

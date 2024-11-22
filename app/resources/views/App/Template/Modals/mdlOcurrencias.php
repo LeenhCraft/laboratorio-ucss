@@ -77,7 +77,7 @@
                             <span>Agregar</span>
                         </button>
                     </div>
-                    <div class="col-12 table-responsive">
+                    <div class="col-12">
                         <table id="lista-materiales" class="table table-striped">
                             <thead>
                                 <tr>
@@ -166,7 +166,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="table-responsive text-nowrap">
+                <div class="text-nowrap">
                     <table id="ver-materiales" class="table table-striped">
                         <thead>
                             <tr>

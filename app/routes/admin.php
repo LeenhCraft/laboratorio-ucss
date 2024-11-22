@@ -150,8 +150,6 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
         $group->get('/p', IngresosController::class . ':listProductos');
         $group->get('/e', IngresosController::class . ':listEstadosProductos');
         $group->get('/u', IngresosController::class . ':listUnidadesMedida');
-
-        $group->get('/lnh', IngresosController::class . ':cambiarCodigo');
     })->add(PermissionMiddleware::class);
 
     $group->group('/laboratorio', function (RouteCollectorProxy $group) {
@@ -182,7 +180,6 @@ $app->group('/admin', function (RouteCollectorProxy $group) {
 
         $group->post('/save', OcurrenciasController::class . ':store');
         $group->post('/search', OcurrenciasController::class . ':search');
-        $group->post('/generarpdf', OcurrenciasController::class . ':generarpdf');
-        $group->get('/generarpdf', OcurrenciasController::class . ':generarpdf');
+        $group->get('/pdf', OcurrenciasController::class . ':generarpdf');
     })->add(PermissionMiddleware::class);
 })->add(new LoginAdminMiddleware());

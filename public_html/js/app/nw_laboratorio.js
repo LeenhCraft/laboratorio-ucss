@@ -376,8 +376,8 @@ function generateDropdownMenu(row) {
   const options = [];
   const isFechaFutura = row.fecha >= new Date().toLocaleDateString("en-CA");
   const tienePermisos = row.edit || row.delete;
-  const estaCancelado = row.cancelado === 1;
-  const estaCompletado = row.completado === 1;
+  const estaCancelado = row.cancelado == 1;
+  const estaCompletado = row.completado == 1;
 
   // Registrar Ocurrencia siempre estará visible
   options.push(
@@ -412,8 +412,9 @@ function generateDropdownMenu(row) {
     return generarDropdownHTML(options);
   }
 
-  // Editar: solo si tiene permiso de edición y la fecha es futura
-  if (row.edit && isFechaFutura) {
+  // Editar: solo si tiene permiso de edición, la fecha es futura y no esta cancelado
+
+  if (row.edit && isFechaFutura && !estaCancelado) {
     options.push(
       generateDropdownOption(
         "Editar",
@@ -908,9 +909,10 @@ async function cancelarIngreso(id, fechaIngreso, hora) {
         fecha_cancelacion: new Date().toISOString(),
       },
     });
-    console.log(response);
+    // console.log(response);
 
     if (response.status) {
+      divLoading.css("display", "none");
       await Swal.fire({
         icon: "success",
         title: "Ingreso cancelado",
@@ -998,7 +1000,7 @@ function modalRetornar(id) {
   });
 }
 
-function retornarArticulo(id,idprestamo) {
+function retornarArticulo(id, idprestamo) {
   // enviar el id al backend para que se actualice el estado del articulo
   // el backend debe devolver un mensaje de confirmación
   // si el articulo se retorna, se debe recargar la tabla, en los datos retornados debe haber un valor que
@@ -1014,7 +1016,11 @@ function retornarArticulo(id,idprestamo) {
   }).then((result) => {
     if (result.isConfirmed) {
       divLoading.css("display", "flex");
-      $.post(base_url + "admin/laboratorio/r", { id,idprestamo }, function () {})
+      $.post(
+        base_url + "admin/laboratorio/r",
+        { id, idprestamo },
+        function () {}
+      )
         .done(function (response) {
           if (response.status) {
             tblr.ajax.reload();

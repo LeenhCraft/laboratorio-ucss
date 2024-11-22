@@ -556,6 +556,7 @@ class OcurrenciasController extends Controller
                     border-bottom: 1px solid #000;
                     padding-bottom: 10px;
                 }
+                .fs-2 { font-size: 35px; }
                 .logo-container {
                     display: flex;
                     justify-content: space-between;
@@ -604,8 +605,7 @@ class OcurrenciasController extends Controller
             $html = '
                 <div class="header">
                     <div class="logo-container">
-                        <div>CREE</div>
-                        <div>UCSS</div>
+                        <div class="fs-2">UCSS</div>
                     </div>
                     <div class="title">FICHA DE OCURRENCIAS - SALA DE LABORATORIO UCSS</div>
                 </div>

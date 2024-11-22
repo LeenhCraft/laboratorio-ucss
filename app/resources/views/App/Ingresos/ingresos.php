@@ -14,8 +14,8 @@
         endif;
         ?>
     </div>
-    <div class="table-responsive text-nowrap mb-4 min-h-52">
-        <table id="tbl" class="table table-striped min-h-52" width="100%">
+    <div class="table-responsive text-nowrap mb-4">
+        <table id="tbl" class="table table-striped" width="100%">
             <thead>
                 <tr>
                     <th></th>

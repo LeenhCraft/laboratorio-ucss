@@ -320,11 +320,35 @@ function generarPDF(data) {
   const pdfURL =
     base_url + "admin/ocurrencias/pdf?idocurrencia=" + data.idocurrencia;
 
-  // Abrir en nueva pestaña
-  const newWindow = window.open(pdfURL, "_blank");
+  // Obtener el modal y el embed del PDF
+  const modal = new bootstrap.Modal(document.getElementById("mdlVerPDF"));
+  const pdfEmbed = document.getElementById("pdf");
 
-  // Establecer el título de la nueva pestaña
-  newWindow.document.title = `Ocurrencia-${data.titulo_practica}`;
+  // Actualizar el título del modal con el título de la práctica
+  const modalTitle = document.querySelector("#mdlVerPDF .modal-title");
+  modalTitle.textContent = `Ocurrencia - ${data.titulo_practica}`;
+
+  // Establecer la URL del PDF en el embed
+  pdfEmbed.src = pdfURL;
+
+  // Manejar errores de carga del PDF
+  pdfEmbed.onerror = function () {
+    Toast.fire({
+      icon: "info",
+      title: "Error al cargar el PDF. Por favor, intente nuevamente.",
+    });
+    modal.hide();
+  };
+
+  // Mostrar el modal
+  modal.show();
+
+  // Limpiar el embed cuando se cierre el modal
+  document
+    .getElementById("mdlVerPDF")
+    .addEventListener("hidden.bs.modal", function () {
+      pdfEmbed.src = "";
+    });
 
   divLoading.css("display", "none");
 }

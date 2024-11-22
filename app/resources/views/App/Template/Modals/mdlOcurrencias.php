@@ -122,7 +122,7 @@
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div>
                             <p class="p-0 m-0 fw-bold fs-5 text-secondary">
-                                
+
                             </p>
                             <div class="d-flex align-items-center gap-2 text-black fs-normal">
                                 <i class="bx bx-time"></i>
@@ -188,6 +188,29 @@
                 <button type="button" class="btn btn-primary" id="btnGenerarPDF">
                     <i class="bx bx-file-pdf me-2"></i>
                     Ver PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal para ver un pdf -->
+
+<div class="modal fade" id="mdlVerPDF" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">PDF de la Ocurrencia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <embed id="pdf" src="" type="application/pdf" width="100%" height="600px">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary fw-normal" data-bs-dismiss="modal">
+                    <i class="fa-regular
+                        fa-circle-xmark me-2"></i>
+                    <span>Cerrar</span>
                 </button>
             </div>
         </div>

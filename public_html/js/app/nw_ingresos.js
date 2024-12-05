@@ -297,35 +297,38 @@ function resetFormArt() {
   $("#und_medida").val("").trigger("change");
 }
 
+function initializeSelect2(selector, placeholder) {
+  $(selector).select2({
+    width: "100%",
+    placeholder: placeholder,
+    dropdownParent: $(selector).parent(),
+  });
+}
+
 function agregarArticulo(ths, idinventario, codigo) {
   $("#modal-title .title-text").text("Ingreso N°: " + codigo);
   $("#idingreso").val(idinventario);
-  listProductos().then(() => {
-    $("#lista_articulos").select2({
-      width: "100%",
-      placeholder: "Seleccione una opción",
-      dropdownParent: $("#lista_articulos").parent(),
-    });
-    resetFormArt();
-  });
 
-  listEstados().then(() => {
-    $("#estado_articulos").select2({
-      width: "100%",
-      placeholder: "Seleccione una opción",
-      dropdownParent: $("#estado_articulos").parent(),
-    });
-    resetFormArt();
-  });
+  const productosPromise = listProductos();
+  const estadosPromise = listEstados();
+  const undMedidaPromise = listUndMedida();
 
-  listUndMedida().then(() => {
-    $("#und_medida").select2({
-      width: "100%",
-      placeholder: "Seleccione una opción",
-      dropdownParent: $("#und_medida").parent(),
-    });
+  productosPromise.then(() =>
+    initializeSelect2("#lista_articulos", "Seleccione una opción")
+  );
+  estadosPromise.then(() =>
+    initializeSelect2("#estado_articulos", "Seleccione una opción")
+  );
+  undMedidaPromise.then(() =>
+    initializeSelect2("#und_medida", "Seleccione una opción")
+  );
+
+  // esperar a que todas las promesas se resuelvan
+  Promise.all([productosPromise, estadosPromise, undMedidaPromise]).then(() => {
+    resetFormArt();
+    $("#estado_articulos").val(2).trigger("change");
+    $("#und_medida").val(2).trigger("change");
     $("#mdlAgregar").modal("show");
-    resetFormArt();
   });
 }
 
@@ -354,7 +357,9 @@ function listEstados() {
         $("#estado_articulos").empty();
         response.forEach((element) => {
           $("#estado_articulos").append(
-            `<option value="${element.idcondicion}">${element.nombre}</option>`
+            `<option ${element.idcondicion == 2 ? "selected" : ""} value="${
+              element.idcondicion
+            }">${element.nombre}</option>`
           );
         });
         resolve(response);

@@ -18,7 +18,7 @@
                 <hr class="my-2">
                 <div>
                     <div class="row">
-                        <div class="col-12 col-lg-6">
+                        <div class="col-12 col-lg-6 d-none">
                             <label class="fw-bold form-label text-capitalize" for="idtipomaterial">Tipo de material</label>
                             <select name="idtipomaterial" id="idtipomaterial" class="form-select">
                                 <option value="0" selected>Seleccione</option>

@@ -23,7 +23,6 @@ $("#frmMateriales").submit(function (e) {
   // console.table(formData);
   $.post(base_url + "admin/inventario/save", formData, function (response) {})
     .done(function (response) {
-      console.log(response);
       if (response.status) {
         Swal.fire("Éxito", response.message, "success");
         tb.api().ajax.reload();
@@ -38,9 +37,7 @@ $("#frmMateriales").submit(function (e) {
         icon: "error",
         title: "error: " + errorThrown,
       });
-      console.log(jqXHR);
-      console.log(textStatus);
-      console.log(errorThrown);
+      console.log(jqXHR, textStatus, errorThrown);
     })
     .always(function (response) {
       divLoading.css("display", "none");
@@ -214,9 +211,7 @@ function fntEdit(id, tipo) {
         icon: "error",
         title: "error: " + errorThrown,
       });
-      console.log(jqXHR);
-      console.log(textStatus);
-      console.log(errorThrown);
+      console.log(jqXHR, textStatus, errorThrown);
     })
     .always(function (response) {
       divLoading.css("display", "none");

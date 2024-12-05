@@ -187,6 +187,7 @@ class MaterialesController extends Controller
             return $this->respondWithError($response, "No tiene permisos para realizar esta acción");
         }
         $data = $this->sanitize($request->getParsedBody());
+        $data["idtipomaterial"] = 1;
         if (isset($data["idmaterial"]) && !empty($data["idmaterial"])) {
             return $this->update($request, $response);
         }

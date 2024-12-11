@@ -189,6 +189,7 @@
 							<tr>
 								<th>Equipo/Material</th>
 								<th>cantidad</th>
+								<th>Estado</th>
 							</tr>
 						</thead>
 						<tbody>

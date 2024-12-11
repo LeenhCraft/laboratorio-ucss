@@ -392,6 +392,7 @@ class LaboratorioController extends Controller
 		$existeDetalle = $modelDetalle
 			->where("idprestamo", $idprestamo)
 			->where("idbalance", $data["id"])
+			->orderBy("iddetalle", "DESC")
 			->first();
 		$rq = "";
 		// no existe el detalle
@@ -411,22 +412,29 @@ class LaboratorioController extends Controller
 			]);
 		} else {
 			// existe el detalle
-
 			// verificar stock en lab_balance_inventarios
 			$existeDetalle["cantidad_solicitada"] = $data["cantidad"];
 			$hayStock = $this->verificarStock($existeDetalle);
 			if (!$hayStock["status"]) {
 				return $this->respondWithError($response, $hayStock["message"]);
 			}
-			// actualizar el detalle
-
-			// return $this->respondWithError($response, "Ya existe un detalle con este material");
-			$rq = $modelDetalle->update(
-				$existeDetalle["iddetalle"],
-				[
+			if ($existeDetalle["estado"] === "Devuelto") {
+				// insertar el nuevo detalle
+				$rq = $modelDetalle->create([
+					"idprestamo" => $idprestamo,
+					"idbalance" => $data["id"],
 					"cantidad" => $data["cantidad"] ?? "1",
-				]
-			);
+				]);
+			} else {
+				// actualizar el detalle
+				return $this->respondWithError($response, "Ya existe un detalle con este material");
+				// $rq = $modelDetalle->update(
+				// 	$existeDetalle["iddetalle"],
+				// 	[
+				// 		"cantidad" => $data["cantidad"] ?? "1",
+				// 	]
+				// );
+			}
 		}
 		// actualizar el estado del inventario
 		$clsBalance = new BalanceClass;
@@ -671,7 +679,10 @@ class LaboratorioController extends Controller
 		$rq = $model->find($data['id']);
 		if (!empty($rq)) {
 			$idbalance["idbalance"] = $rq["idbalance"];
-			$idbalance["reponer_cantidad"] = $rq["cantidad"];
+			$idbalance["reponer_cantidad"] = 0;
+			if ($rq["estado"] !== "Devuelto") {
+				$idbalance["reponer_cantidad"] = $rq["cantidad"];
+			}
 			$rq = $model->delete($data["id"]);
 			if (!empty($rq)) {
 				$clsBalance = new BalanceClass;

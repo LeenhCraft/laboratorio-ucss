@@ -19,13 +19,13 @@
                 <hr class="my-2">
                 <div class="row mb-2">
                     <div class="col-12 col-lg-6">
-                        <label class="fw-bold form-label text-capitalize" for="fecha_ingreso">Fecha Ingreso</label>
+                        <label class="fw-bold form-label text-capitalize" for="fecha_ingreso">Fecha Ingreso: <span class="text-danger">*</span></label>
                         <input id="fecha_ingreso" name="fecha_ingreso" type="date" class="form-control">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 col-lg-6 mb-2">
-                        <label for="motivo_ingreso" class="fw-bold form-label text-capitalize">Motivo Ingreso</label>
+                        <label for="motivo_ingreso" class="fw-bold form-label text-capitalize">Motivo Ingreso: <span class="text-danger">*</span></label>
                         <select name="motivo_ingreso" id="motivo_ingreso" class="form-select">
                             <option value="0">Seleccione una opcion</option>
                             <option value="1">Compras</option>
@@ -36,7 +36,7 @@
                         </select>
                     </div>
                     <div class="col-12 col-lg-6 mb-2">
-                        <label for="tipo_documento" class="fw-bold form-label text-capitalize">Tipo Documento</label>
+                        <label for="tipo_documento" class="fw-bold form-label text-capitalize">Tipo Documento: <span class="text-danger">*</span></label>
                         <select name="tipo_documento" id="tipo_documento" class="form-select">
                             <option value="0">Seleccione una opcion</option>
                             <option value="1">Cargo</option>

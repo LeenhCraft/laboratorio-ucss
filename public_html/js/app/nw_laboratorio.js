@@ -730,8 +730,12 @@ function verArticulos(id) {
 }
 
 function generateBtnBrush(data) {
+  if (data.estado == "Devuelto") {
+    return `<button class="btn p-1 btn-sm border-0 text-success" type="button" disabled>
+    <i class='bx bx-brush bx-sm' ></i>
+    </button>`;
+  }
   return `<button class="btn p-1 btn-sm border-0 text-danger" type="button" onclick="delArticuloIngreso('${data.iddetalle}')">
-  <img src="/img/bin_empty.png" class="w-px-20 d-none">
   <i class='bx bx-trash-alt bx-sm' ></i>
   </button>`;
 }
